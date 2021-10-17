@@ -12,7 +12,7 @@ public class StartGame extends JFrame {
     private GamePanel gamePanel = null;
     private static int PlayTime = 0;
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         //使用EventQueue来使方法结束时资源被释放
         EventQueue.invokeLater(() -> {
             try {
@@ -26,43 +26,44 @@ public class StartGame extends JFrame {
         });
     }
 
-    private StartGame(){
-            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            setBounds((screenSize.width - 600) / 3, (screenSize.height - 600) / 3, 600, 600);
-            getContentPane().setLayout(new BorderLayout(0, 0));
+    private StartGame() {
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds((screenSize.width - 600) / 3, (screenSize.height - 600) / 3, 600, 600);
+        getContentPane().setLayout(new BorderLayout(0, 0));
 
-            JPanel panel = new JPanel();
-            panel.setForeground(Color.GRAY);
-            panel.setBackground(Color.WHITE);
-            getContentPane().add(panel);
-            panel.setLayout(null);
+        JPanel panel = new JPanel();
+        panel.setForeground(Color.GRAY);
+        panel.setBackground(Color.WHITE);
+        getContentPane().add(panel);
+        panel.setLayout(null);
 
-            System.out.println(StartGame.class.getResource("/").getPath());
-            JLabel lblNewLabel = new JLabel("New label");
-            lblNewLabel.setBackground(Color.WHITE);
-            lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            lblNewLabel.setForeground(Color.WHITE);
-            lblNewLabel.setIcon(new ImageIcon(StartGame.class.getResource("/img/tankBattle2.png")));
-            lblNewLabel.setBounds(10, 10, 577, 213);
-            panel.add(lblNewLabel);
+        System.out.println(StartGame.class.getResource("/").getPath());
+        JLabel lblNewLabel = new JLabel("New label");
+        lblNewLabel.setBackground(Color.WHITE);
+        lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        lblNewLabel.setForeground(Color.WHITE);
+        lblNewLabel.setIcon(new ImageIcon(StartGame.class.getResource("/img/tankBattle2.png")));
+        lblNewLabel.setBounds(10, 10, 577, 213);
+        panel.add(lblNewLabel);
 
-            JButton btnNewButton = new JButton("");
-            btnNewButton.setBackground(Color.BLACK);
-            btnNewButton.setBounds(224, 243, 144, 34);
-            btnNewButton.setIcon(new ImageIcon(StartGame.class.getResource("/img/SinglePlayer.gif")));
-            btnNewButton.addActionListener(e -> play(Mode.Single));
-            btnNewButton.setBorderPainted(false);
-            panel.add(btnNewButton);
+        JButton btnNewButton = new JButton("");
+        btnNewButton.setBackground(Color.BLACK);
+        btnNewButton.setBounds(224, 243, 144, 34);
+        btnNewButton.setIcon(new ImageIcon(StartGame.class.getResource("/img/SinglePlayer.gif")));
+        btnNewButton.addActionListener(e -> play(Mode.Single));
+        btnNewButton.setBorderPainted(false);
+        panel.add(btnNewButton);
 
-            JButton btnNewButton_1 = new JButton("");
-            btnNewButton_1.setBounds(224, 298, 144, 34);
-            btnNewButton_1.setIcon(new ImageIcon(StartGame.class.getResource("/img/DoublePlayer.gif")));
-            btnNewButton_1.setBorderPainted(false);
-            //btnNewButton_1.addActionListener(e -> play(Mode.Double));
-            panel.add(btnNewButton_1);
+        JButton btnNewButton_1 = new JButton("");
+        btnNewButton_1.setBounds(224, 298, 144, 34);
+        btnNewButton_1.setIcon(new ImageIcon(StartGame.class.getResource("/img/DoublePlayer.gif")));
+        btnNewButton_1.setBorderPainted(false);
+        //btnNewButton_1.addActionListener(e -> play(Mode.Double));
+        panel.add(btnNewButton_1);
 
     }
+
     private void play(Mode mode) {
         GamePanel.live.getAndSet(true);
         play = new JFrame("Live" + ":" + PlayTime++ + "s");
@@ -99,3 +100,4 @@ public class StartGame extends JFrame {
     }
 
 }
+

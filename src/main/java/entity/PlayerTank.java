@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import static panel.GamePanel.executorService;
+import static panel.GamePanel.map;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -79,4 +80,14 @@ public class PlayerTank extends Tank {
         //g2.setColor(Color.BLUE);
         //测试了一下 原来整个panel在第四象限上，y增加往下增长
     }
+    @Override
+    public void GetMoveDirection(int n){
+        int t_x = x/40;
+        int t_y = y/40;
+        super.GetMoveDirection(n);
+//        if (t_y != y/40 || t_x != x/40) {
+//                EnemyTank.reCalculatePath=true;
+//            }
+     }
+
 }

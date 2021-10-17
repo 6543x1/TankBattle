@@ -54,9 +54,11 @@ public class GamePanel extends JPanel {
         int x = screenWidth / 40;
         int y = screenHeight / 40 - 1;
 
-        map = new ObjType[y][x];
+        map = new ObjType[y+1][x+1];//map大小 ：x=22.5 y=14
         for(int i=0;i<y;i++){
-            Arrays.fill(map[y],ObjType.air);
+            for(int j=0;j<x;j++){
+                map[i][j]=ObjType.air;
+            }
         }
 //
 //        for (int i = 0; i < y; ++i) {
@@ -94,18 +96,21 @@ public class GamePanel extends JPanel {
 //        while (map[coord.y][coord.x]==WALL){
 //            coord=randomCoord();
 //        }
-        PlayerTank p1 = new PlayerTank(coord.x*40,coord.y*40, Direction.UP, 1);
+//        PlayerTank p1 = new PlayerTank(coord.x*40,coord.y*40, Direction.UP, 1);
+        PlayerTank p1 = new PlayerTank(0,0, Direction.UP, 1);
         p1.setImage(ImageUtils.p1upImage);
         p1.setSpeed(20);
         P1_TAG = p1.getId();
         map[coord.y][coord.x] = ObjType.playerTank;
         tanks.put(p1.getId(), p1);
         coord=randomCoord();
-        EnemyTank e1=new EnemyTank(coord.x*40,coord.y*40,Direction.UP,11);
+//        EnemyTank e1=new EnemyTank(coord.x*40,coord.y*40,Direction.UP,11);
+        EnemyTank2 e1=new EnemyTank2(5*40,3*40,Direction.UP,11);
         e1.setImage(ImageUtils.p1upImage);
-        e1.setSpeed(15);
+        e1.setSpeed(40);//速度尽量设置成40的倍数，以免移动到比较特别的点导致寻路系统失效
         map[coord.y][coord.x]=ObjType.enemyTank;
         tanks.put(e1.getId(),e1);
+        //出生点1：120，0 360，0 720，0
         //双人模式
 //        if (mode == Mode.Double) {
 //            coord = randomCoord();
@@ -124,7 +129,8 @@ public class GamePanel extends JPanel {
 
     private void initWall(){
 
-            Coordinate coord = randomCoord();
+           // Coordinate coord = randomCoord();
+        Coordinate coord=new Coordinate(10,6);
 //        while (map[coord.y][coord.x]==WALL){
 //            coord=randomCoord();
 //        }

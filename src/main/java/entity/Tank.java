@@ -1,6 +1,5 @@
 package entity;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,6 +12,7 @@ import java.util.Stack;
 import java.util.concurrent.Future;
 
 import static panel.GamePanel.executorService;
+import static panel.GamePanel.map;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -57,7 +57,8 @@ public abstract class Tank extends VisualObj {
     }
 
     public void GetMoveDirection(int n) {
-
+        int t_x = x/40;
+        int t_y = y/40;
         //判断按键
         switch (n) {
             //判断移动基本上都是先假设已经移动然后判断移动之后是否会发生重叠
@@ -167,10 +168,37 @@ public abstract class Tank extends VisualObj {
                 // break;
             }
         }
+        //发生了一整格的变化
+        if (t_y != y/40 || t_x != x/40) {
+            //x、y本来就是*40后放入tank的
+            int t_y2 = y / 40;
+            int t_x2 = x / 40;
+            //我并没有存储坦克的地图坐标。。。大意了，这样不好寻路？
+            //因为移动之后要把原来的点给变成空气
+            if (((t_y2 != t_y) || (t_x2 != t_x)) && (x % 40 == 0 || y % 40 == 0)) {
+                //20%40!=0 !!!!!
+//                synchronized (map) {
+//                    map[t_y2][t_x2] = map[t_y][t_x];
+//                    map[t_y][t_x] = ObjType.air;
+//                }//运行到此处出现问题，死锁了？
+                map[t_y2][t_x2] = map[t_y][t_x];//此处会导致移动到边界时异常,不是会回滚位置吗？
+                map[t_y][t_x] = ObjType.air;
+                // coord.x = t_x;
+                // coord.y = t_y;
+//                if (id == Game.PLAY_1) Game.printMap();
+
+//                if (!executorService.isShutdown()&&this.id!=GamePanel.P1_TAG) {
+//                    stackFuture = executorService.submit(new EnemyTank.TaskWithPath());
+//                }
+                next = null;//很重要！
+
+
+            }
+        }
 
     }
     //是否可以移动
-    private boolean CheckAndCorrectPosition() {
+    protected boolean CheckAndCorrectPosition() {
         //此方法用于纠正位置，比如超出边界、和不可越过物体重叠等问题
         //先根据direction往对应xy加数据 然后判断是否碰撞，最后恢复现场
 //        //检测是否碰撞到墙体

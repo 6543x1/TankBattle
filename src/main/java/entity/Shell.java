@@ -83,6 +83,7 @@ public class Shell extends VisualObj {
                 }
                 tank.HP-=damage;
                 if(tank.getHP()<=0){
+                    tank.setAlive(false);
                     GamePanel.tanks.remove(tank.getId());
                     if(tank.getId()==GamePanel.P1_TAG&&GamePanel.mode==Mode.Single){
                         GamePanel.ShutDown();
