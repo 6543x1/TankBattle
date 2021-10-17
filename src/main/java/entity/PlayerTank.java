@@ -2,14 +2,11 @@ package entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import panel.GamePanel;
-import utils.ImageUtils;
+import myEnum.Direction;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 import static panel.GamePanel.executorService;
-import static panel.GamePanel.map;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

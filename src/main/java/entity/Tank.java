@@ -3,15 +3,15 @@ package entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import myEnum.Direction;
+import myEnum.ObjType;
 import panel.GamePanel;
 import utils.ImageUtils;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Stack;
 import java.util.concurrent.Future;
 
-import static panel.GamePanel.executorService;
 import static panel.GamePanel.map;
 
 @EqualsAndHashCode(callSuper = true)

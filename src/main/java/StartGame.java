@@ -1,4 +1,4 @@
-import entity.Mode;
+import myEnum.Mode;
 import panel.GamePanel;
 
 import javax.swing.*;

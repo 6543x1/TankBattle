@@ -1,13 +1,15 @@
 package panel;
 
 import entity.*;
+import myEnum.Direction;
+import myEnum.Mode;
+import myEnum.ObjType;
 import utils.ImageUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -105,7 +107,7 @@ public class GamePanel extends JPanel {
         tanks.put(p1.getId(), p1);
         coord=randomCoord();
 //        EnemyTank e1=new EnemyTank(coord.x*40,coord.y*40,Direction.UP,11);
-        EnemyTank2 e1=new EnemyTank2(5*40,3*40,Direction.UP,11);
+        EnemyTank e1=new EnemyTank(5*40,3*40,Direction.UP,11);
         e1.setImage(ImageUtils.p1upImage);
         e1.setSpeed(40);//速度尽量设置成40的倍数，以免移动到比较特别的点导致寻路系统失效
         map[coord.y][coord.x]=ObjType.enemyTank;

@@ -1,13 +1,12 @@
 import entity.Coordinate;
-import entity.Direction;
-import entity.ObjType;
+import myEnum.Direction;
+import myEnum.ObjType;
 import org.junit.Test;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static panel.GamePanel.*;
-import static panel.GamePanel.map;
 
 public class MyTest {
 

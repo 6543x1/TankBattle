@@ -1,6 +1,7 @@
 package entity;
 
-import panel.GamePanel;
+import myEnum.Direction;
+import myEnum.ObjType;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -64,7 +65,7 @@ public class EnemyTank extends Tank {
         do {
             y = random.nextInt(map.length);
             x = random.nextInt(map[0].length);
-        } while (map[y][x]!=ObjType.air);
+        } while (map[y][x]!= ObjType.air);
         return new Coordinate(x, y);
     }
     class TraceMove implements Runnable{

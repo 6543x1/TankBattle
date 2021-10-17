@@ -1,4 +1,4 @@
-package entity;
+package myEnum;
 
 public enum Direction {
 /**
