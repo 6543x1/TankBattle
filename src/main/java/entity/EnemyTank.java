@@ -2,6 +2,7 @@ package entity;
 
 import myEnum.Direction;
 import myEnum.ObjType;
+import panel.GamePanel;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -175,7 +176,7 @@ public class EnemyTank extends Tank {
         //血条和蓝条的高度
         //这个paintTank方法也应该写到坦克类中
         int h = 5;
-        g2.drawImage(getImage(), getX(), getY(), 40, 40, null);
+        g2.drawImage(getImage(), getX(), getY(), width, height, null);
 
         g2.setColor(Color.RED);
         //玩家血条设置为绿色
@@ -194,14 +195,14 @@ public class EnemyTank extends Tank {
 
     @Override
     public void GetMoveDirection(int n) {
-        int t_x = x/40;
-        int t_y = y/40;
+        int t_x = x/width;
+        int t_y = y/height;
         super.GetMoveDirection(n);
         // 如果坐标发生了一整格的变化，就更新二维数组->方便寻路系统
-        if (t_y != y/40 || t_x != x/40) {
+        if (t_y != y/height || t_x != x/width) {
             //x、y本来就是*40后放入tank的
-            int t_y2 = y / 40;
-            int t_x2 = x / 40;
+            int t_y2 = y / height;
+            int t_x2 = x / width;
             //我并没有存储坦克的地图坐标。。。大意了，这样不好寻路？
             //因为移动之后要把原来的点给变成空气
             if (((t_y2 != t_y) || (t_x2 != t_x)) && (x % 40 == 0 || y % 40 == 0)) {
@@ -248,10 +249,10 @@ public class EnemyTank extends Tank {
      * @return 移动的路径
      */
     private Stack<Coordinate> GetPath() {
-        Coordinate target = new Coordinate(tanks.get(P1_TAG).getX()/40, tanks.get(P1_TAG).getY()/40);
+        Coordinate target = new Coordinate(tanks.get(P1_TAG).getX()/width, tanks.get(P1_TAG).getY()/height);
         Queue<Coordinate> queue = new LinkedBlockingQueue<>();
         HashSet<Coordinate> checkSet=new HashSet<>();
-        Coordinate coordinate = new Coordinate(x/40, y/40);
+        Coordinate coordinate = new Coordinate(x/width, y/height);
         int[] a= {2,3,4,5,6};
         int b=Arrays.stream(a).max().getAsInt();
         checkSet.add(coordinate);
@@ -289,8 +290,8 @@ public class EnemyTank extends Tank {
                 //判断该点是否可行
                 flag = true;
                 Coordinate nextStep = new Coordinate(tx, ty);
-                int borderX = getScreenWidth()/ 40;
-                int borderY = getScreenHeight()/ 40 - 1;
+                int borderX = getScreenWidth()/ 60;
+                int borderY = getScreenHeight()/ 60 - 1;
                 if(tx<0||ty<0||tx>=borderX||ty>=borderY){
                     flag=false;
                 }

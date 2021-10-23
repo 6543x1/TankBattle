@@ -34,7 +34,7 @@ public abstract class Tank extends VisualObj {
 
 
     public Tank(int x, int y, Direction direction, int id) {
-        super(x, y, 40, 40);
+        super(x, y, 60, 60);
         this.fullHp = 40;
         this.HP = 40;
         this.curDirection = direction;
@@ -57,8 +57,8 @@ public abstract class Tank extends VisualObj {
     }
 
     public void GetMoveDirection(int n) {
-        int t_x = x/40;
-        int t_y = y/40;
+        int t_x = x/width;
+        int t_y = y/height;
         //判断按键
         switch (n) {
             //判断移动基本上都是先假设已经移动然后判断移动之后是否会发生重叠
@@ -169,13 +169,13 @@ public abstract class Tank extends VisualObj {
             }
         }
         //发生了一整格的变化
-        if (t_y != y/40 || t_x != x/40) {
+        if (t_y != y/height || t_x != x/width) {
             //x、y本来就是*40后放入tank的
-            int t_y2 = y / 40;
-            int t_x2 = x / 40;
+            int t_y2 = y / height;
+            int t_x2 = x / width;
             //我并没有存储坦克的地图坐标。。。大意了，这样不好寻路？
             //因为移动之后要把原来的点给变成空气
-            if (((t_y2 != t_y) || (t_x2 != t_x)) && (x % 40 == 0 || y % 40 == 0)) {
+            if (((t_y2 != t_y) || (t_x2 != t_x)) && (x % width == 0 || y % height == 0)) {
                 //20%40!=0 !!!!!
 //                synchronized (map) {
 //                    map[t_y2][t_x2] = map[t_y][t_x];

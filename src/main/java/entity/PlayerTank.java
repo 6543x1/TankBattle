@@ -56,7 +56,7 @@ public class PlayerTank extends Tank {
         //血条和蓝条的高度
         //这个paintTank方法也应该写到坦克类中
         int h = 5;
-        g2.drawImage(getImage(), getX(), getY(), 40, 40, null);
+        g2.drawImage(getImage(), getX(), getY(), width, height, null);
         if (getId() >= 0) {
             g2.setColor(Color.GREEN);
             //玩家血条设置为绿色
@@ -79,8 +79,8 @@ public class PlayerTank extends Tank {
     }
     @Override
     public void GetMoveDirection(int n){
-        int t_x = x/40;
-        int t_y = y/40;
+        int t_x = x/60;
+        int t_y = y/60;
         super.GetMoveDirection(n);
 //        if (t_y != y/40 || t_x != x/40) {
 //                EnemyTank.reCalculatePath=true;

@@ -53,8 +53,8 @@ public class GamePanel extends JPanel {
      */
     private void initMap() {
 
-        int x = screenWidth / 40;
-        int y = screenHeight / 40 - 1;
+        int x = screenWidth / 60;
+        int y = screenHeight / 60 - 1;
 
         map = new ObjType[y+1][x+1];//map大小 ：x=22.5 y=14
         for(int i=0;i<y;i++){
@@ -136,7 +136,7 @@ public class GamePanel extends JPanel {
 //        while (map[coord.y][coord.x]==WALL){
 //            coord=randomCoord();
 //        }
-            BrickWall brickWall=new BrickWall(coord.hashCode(),coord.x*40,coord.y*40,40,40);
+            BrickWall brickWall=new BrickWall(coord.hashCode(),coord.x*40,coord.y*40,60,60);
 
             map[coord.y][coord.x] =ObjType.hitWall;
             walls.put(brickWall.getId(),brickWall);
@@ -150,8 +150,8 @@ public class GamePanel extends JPanel {
                     if(i==base.getX()&&j==base.getY()){
                         continue;
                     }
-                    brickWall=new BrickWall(count++,i,j,40,40);
-                    map[brickWall.getX()/40][brickWall.getY()/40]=ObjType.hitWall;
+                    brickWall=new BrickWall(count++,i,j,60,60);
+                    map[brickWall.getX()/60][brickWall.getY()/60]=ObjType.hitWall;
                     walls.put(brickWall.getId(),brickWall);
                 }
             }
