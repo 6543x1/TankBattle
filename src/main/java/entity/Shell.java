@@ -4,6 +4,7 @@ import lombok.Data;
 import myEnum.Direction;
 import myEnum.Mode;
 import panel.GamePanel;
+import utils.ImageUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -39,7 +40,7 @@ public class Shell extends VisualObj {
             while (alive) {
                 if (isHit()) {
                     alive = false;
-                    GamePanel.shells.remove(shooter);
+                    GameMap.shells.remove(shooter);
                 } else {
                     if (direction == Direction.UP) {
                         y -= speed;
@@ -64,20 +65,26 @@ public class Shell extends VisualObj {
         if (x < 0 || y < 0 || x > GamePanel.getScreenWidth() || y > GamePanel.getScreenHeight()) {
             return true;
         }
-        for(Wall wall:GamePanel.walls.values()){
+        for(Wall wall: GameMap.walls.values()){
             if(this.isCollided(wall)){
                 alive=false;
                 if(wall.getHp()==-1){//-1为不可击毁
                     continue;
                 }
                 wall.hp-=damage;//因为Shell继承自visualObj Wall也是 而且protected 所以可以直接访问....
-                if(wall.getHp()<=0){
-                    GamePanel.walls.remove(wall.getId());
+                if(wall.getHp()<=0&&!(wall instanceof Base)){
+                    GameMap.walls.remove(wall.getId());
+                }
+                else if(wall.getHp()<=0){
+                    //Base
+                    wall.setImage(ImageUtils.brokenBase);
+                    wall.alive=false;
+                    //同时通知Panel GameOver
                 }
                 return true;
             }
         }
-        for(Tank tank:GamePanel.tanks.values()){
+        for(Tank tank: GameMap.tanks.values()){
             if(this.isCollided(tank)){
                 alive=false;
                 if(tank.getHP()==-1){//-1为不可击毁
@@ -86,7 +93,7 @@ public class Shell extends VisualObj {
                 tank.HP-=damage;
                 if(tank.getHP()<=0){
                     tank.setAlive(false);
-                    GamePanel.tanks.remove(tank.getId());
+                    GameMap.tanks.remove(tank.getId());
                     if(tank.getId()==GamePanel.P1_TAG&&GamePanel.mode== Mode.Single){
                         GamePanel.ShutDown();
                     }
@@ -94,10 +101,10 @@ public class Shell extends VisualObj {
                 return true;
             }
         }
-        for(Shell shell:GamePanel.shells.values()){
+        for(Shell shell: GameMap.shells.values()){
             if(this.isCollided(shell)&&!this.equals(shell)){
                 alive=false;
-                GamePanel.walls.remove(shell.getShooter());
+                GameMap.walls.remove(shell.getShooter());
                 return true;
             }
         }

@@ -2,7 +2,6 @@ package entity;
 
 import myEnum.Direction;
 import myEnum.ObjType;
-import panel.GamePanel;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -64,9 +63,9 @@ public class EnemyTank extends Tank {
         Random random = new Random(System.currentTimeMillis());
         int x, y;
         do {
-            y = random.nextInt(map.length);
-            x = random.nextInt(map[0].length);
-        } while (map[y][x]!= ObjType.air);
+            y = random.nextInt(GameMap.map.length);
+            x = random.nextInt(GameMap.map[0].length);
+        } while (GameMap.map[y][x]!= ObjType.air);
         return new Coordinate(x, y);
     }
     class TraceMove implements Runnable{
@@ -205,14 +204,14 @@ public class EnemyTank extends Tank {
             int t_x2 = x / width;
             //我并没有存储坦克的地图坐标。。。大意了，这样不好寻路？
             //因为移动之后要把原来的点给变成空气
-            if (((t_y2 != t_y) || (t_x2 != t_x)) && (x % 40 == 0 || y % 40 == 0)) {
+            if (((t_y2 != t_y) || (t_x2 != t_x)) && (x % height == 0 || y % width == 0)) {
                 //20%40!=0 !!!!!
 //                synchronized (map) {
 //                    map[t_y2][t_x2] = map[t_y][t_x];
 //                    map[t_y][t_x] = ObjType.air;
 //                }//运行到此处出现问题，死锁了？
-                map[t_y2][t_x2] = map[t_y][t_x];
-                map[t_y][t_x] = ObjType.air;
+                GameMap.map[t_y2][t_x2] = GameMap.map[t_y][t_x];
+                GameMap.map[t_y][t_x] = ObjType.air;
                 // coord.x = t_x;
                 // coord.y = t_y;
 //                if (id == Game.PLAY_1) Game.printMap();
@@ -249,7 +248,7 @@ public class EnemyTank extends Tank {
      * @return 移动的路径
      */
     private Stack<Coordinate> GetPath() {
-        Coordinate target = new Coordinate(tanks.get(P1_TAG).getX()/width, tanks.get(P1_TAG).getY()/height);
+        Coordinate target = new Coordinate(GameMap.tanks.get(P1_TAG).getX()/width, GameMap.tanks.get(P1_TAG).getY()/height);
         Queue<Coordinate> queue = new LinkedBlockingQueue<>();
         HashSet<Coordinate> checkSet=new HashSet<>();
         Coordinate coordinate = new Coordinate(x/width, y/height);
@@ -290,8 +289,8 @@ public class EnemyTank extends Tank {
                 //判断该点是否可行
                 flag = true;
                 Coordinate nextStep = new Coordinate(tx, ty);
-                int borderX = getScreenWidth()/ 60;
-                int borderY = getScreenHeight()/ 60 - 1;
+                int borderX = getScreenWidth()/ 40;
+                int borderY = getScreenHeight()/ 40 - 1;
                 if(tx<0||ty<0||tx>=borderX||ty>=borderY){
                     flag=false;
                 }
@@ -309,7 +308,7 @@ public class EnemyTank extends Tank {
                 if (flag) {
                     //通过数组，判断是否这一点可以走（2、3应当替换成对应的Obj的数字）
                     //数组越界 应当/40
-                    flag = (map[ty][tx] == ObjType.air || map[ty][tx] == ObjType.surface);
+                    flag = (GameMap.map[ty][tx] == ObjType.air || GameMap.map[ty][tx] == ObjType.surface);
                 }
                 //该点可以用
                 if (flag) {

@@ -12,7 +12,7 @@ import java.awt.event.KeyEvent;
 import java.util.Stack;
 import java.util.concurrent.Future;
 
-import static panel.GamePanel.map;
+import static entity.GameMap.map;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -34,7 +34,7 @@ public abstract class Tank extends VisualObj {
 
 
     public Tank(int x, int y, Direction direction, int id) {
-        super(x, y, 60, 60);
+        super(x, y, 40, 40);
         this.fullHp = 40;
         this.HP = 40;
         this.curDirection = direction;
@@ -133,7 +133,7 @@ public abstract class Tank extends VisualObj {
 //                    }
                 //设置子弹的坐标
                 //纵横轴坐标需要结合坦克和子弹的图像大小决定
-                if(GamePanel.shells.get(id)!=null){
+                if(GameMap.shells.get(id)!=null){
                     System.out.println("当前仍有子弹在飞行！射击失败");
                     key=-1;
                     return;
@@ -160,7 +160,7 @@ public abstract class Tank extends VisualObj {
                         break;
                 }
                 try {
-                    GamePanel.shells.put(getId(),new Shell(shellX,shellY,curDirection,getId(),10));
+                    GameMap.shells.put(getId(),new Shell(shellX,shellY,curDirection,getId(),10));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -202,13 +202,13 @@ public abstract class Tank extends VisualObj {
         //此方法用于纠正位置，比如超出边界、和不可越过物体重叠等问题
         //先根据direction往对应xy加数据 然后判断是否碰撞，最后恢复现场
 //        //检测是否碰撞到墙体
-        for (Wall wall : GamePanel.walls.values()) {
+        for (Wall wall : GameMap.walls.values()) {
             if (wall.isCollided(this)) {
                 return false;
             }
         }
         //检测坦克
-        for (Tank tank : GamePanel.tanks.values()) {
+        for (Tank tank : GameMap.tanks.values()) {
             if (tank.isCollided(this) && !this.equals(tank)) {
                 //如果是玩家就攻击
                 return false;

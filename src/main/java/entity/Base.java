@@ -23,8 +23,8 @@ public class Base extends Wall{
         //血条和蓝条的高度
         //这个paintTank方法也应该写到坦克类中
         int h = 5;
-        g2.drawImage(getImage(), getX(), getY(), 40, 40, null);
-        if(hp!=fullHp){
+        g2.drawImage(getImage(), getX(), getY(), width, height, null);
+        if(hp!=fullHp&&alive){
         g2.setColor(Color.GREEN);
         //System.out.println(hp+","+(double)hp/fullHp);
         if((double)hp/fullHp<0.25){

@@ -3,6 +3,7 @@ package entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import myEnum.Direction;
+import utils.ImageUtils;
 
 import java.awt.*;
 
@@ -12,10 +13,12 @@ import static panel.GamePanel.executorService;
 @Data
 public class PlayerTank extends Tank {
     protected boolean move;
+    private int bornCount;
 
     public PlayerTank(int x, int y, Direction direction, int id) {
         super(x, y, direction, id);
         executorService.submit(new MyTankMove());
+        bornCount=300;
     }
 
     public PlayerTank(int x, int y, int width, int height) {
@@ -57,6 +60,11 @@ public class PlayerTank extends Tank {
         //这个paintTank方法也应该写到坦克类中
         int h = 5;
         g2.drawImage(getImage(), getX(), getY(), width, height, null);
+        if(bornCount>=0){
+            int bornCount2=bornCount%4;
+            g2.drawImage(ImageUtils.born[bornCount2],getX()-width/2,getY()-height/2,width*2,height*2,null);
+            bornCount--;
+        }
         if (getId() >= 0) {
             g2.setColor(Color.GREEN);
             //玩家血条设置为绿色

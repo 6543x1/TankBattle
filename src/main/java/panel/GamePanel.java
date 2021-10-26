@@ -11,31 +11,24 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.awt.event.KeyEvent.VK_R;
+
 public class GamePanel extends JPanel {
     public static ExecutorService executorService = Executors.newCachedThreadPool();
     private Image OffScreenImage;
+    private JFrame play;
     //坦克的移动区域
     private final static int screenWidth = 900;
     private final static int screenHeight = 600;
+    private int level;
     //坦克的移动
-    public static final int DOWN = 0;
-    public static final int LEFT = 1;
-    public static final int RIGHT = 2;
-    public static final int UP = 3;
     public static int P1_TAG;
     public static int P2_TAG;
     public static Mode mode;
-    //地图，储存除了子弹以外的东西
-    //注意当使用Coord的x和y的时候是map[y][x]
-    public volatile static ObjType[][] map;
-    public volatile static ConcurrentHashMap<Integer, Tank> tanks = new ConcurrentHashMap<>();
-    public volatile static ConcurrentHashMap<Integer,Shell> shells=new ConcurrentHashMap<>();
-    public volatile static ConcurrentHashMap<Integer,Wall> walls=new ConcurrentHashMap<>();
     public static AtomicBoolean live = new AtomicBoolean(false);//游戏面板是否存活
     public static int getScreenWidth(){return screenWidth;}
     public static int getScreenHeight(){return screenHeight;}
@@ -43,8 +36,8 @@ public class GamePanel extends JPanel {
         Random random = new Random(System.currentTimeMillis());
         int x, y;
         //do {
-            y = random.nextInt(map.length);
-            x = random.nextInt(map[0].length);
+            y = random.nextInt(GameMap.map.length);
+            x = random.nextInt(GameMap.map[0].length);
        // } while (map[y][x] != BLANK);
         return new Coordinate(x, y);
     }
@@ -53,13 +46,13 @@ public class GamePanel extends JPanel {
      */
     private void initMap() {
 
-        int x = screenWidth / 60;
-        int y = screenHeight / 60 - 1;
+        int x = screenWidth / 40;
+        int y = screenHeight / 40 - 1;
 
-        map = new ObjType[y+1][x+1];//map大小 ：x=22.5 y=14
+        GameMap.map = new ObjType[y+1][x+1];//map大小 ：x=22.5 y=14
         for(int i=0;i<y;i++){
             for(int j=0;j<x;j++){
-                map[i][j]=ObjType.air;
+                GameMap.map[i][j]=ObjType.air;
             }
         }
 //
@@ -103,15 +96,15 @@ public class GamePanel extends JPanel {
         p1.setImage(ImageUtils.p1upImage);
         p1.setSpeed(20);
         P1_TAG = p1.getId();
-        map[coord.y][coord.x] = ObjType.playerTank;
-        tanks.put(p1.getId(), p1);
+        GameMap.map[coord.y][coord.x] = ObjType.playerTank;
+        GameMap.tanks.put(p1.getId(), p1);
         coord=randomCoord();
 //        EnemyTank e1=new EnemyTank(coord.x*40,coord.y*40,Direction.UP,11);
         EnemyTank e1=new EnemyTank(5*40,3*40,Direction.UP,11);
         e1.setImage(ImageUtils.p1upImage);
         e1.setSpeed(40);//速度尽量设置成40的倍数，以免移动到比较特别的点导致寻路系统失效
-        map[coord.y][coord.x]=ObjType.enemyTank;
-        tanks.put(e1.getId(),e1);
+        GameMap.map[coord.y][coord.x]=ObjType.enemyTank;
+        GameMap.tanks.put(e1.getId(),e1);
         //出生点1：120，0 360，0 720，0
         //双人模式
 //        if (mode == Mode.Double) {
@@ -136,25 +129,25 @@ public class GamePanel extends JPanel {
 //        while (map[coord.y][coord.x]==WALL){
 //            coord=randomCoord();
 //        }
-            BrickWall brickWall=new BrickWall(coord.hashCode(),coord.x*40,coord.y*40,60,60);
+            BrickWall brickWall=new BrickWall(coord.hashCode(),coord.x*40,coord.y*40,40,40);
 
-            map[coord.y][coord.x] =ObjType.hitWall;
-            walls.put(brickWall.getId(),brickWall);
+            GameMap.map[coord.y][coord.x] =ObjType.hitWall;
+            GameMap.walls.put(brickWall.getId(),brickWall);
             coord.x=430;
             coord.y=560;
-            Base base=new Base(6,coord.x,coord.y,40,40);
-            walls.put(6,base);//这样让基地的血量可以被打印出来
+            Base base=new Base(6,coord.x,coord.y,55,40);
+            GameMap.walls.put(6,base);//这样让基地的血量可以被打印出来
             int count=1;
-            for(int i=base.getX()-40;i<=base.getX()+40;i+=40){
-                for(int j=base.getY()-40;j<=base.getY();j+=40){
-                    if(i==base.getX()&&j==base.getY()){
-                        continue;
-                    }
-                    brickWall=new BrickWall(count++,i,j,60,60);
-                    map[brickWall.getX()/60][brickWall.getY()/60]=ObjType.hitWall;
-                    walls.put(brickWall.getId(),brickWall);
-                }
-            }
+//            for(int i=base.getX()-40;i<=base.getX()+40;i+=40){
+//                for(int j=base.getY()-40;j<=base.getY();j+=40){
+//                    if(i==base.getX()&&j==base.getY()){
+//                        continue;
+//                    }
+//                    brickWall=new BrickWall(count++,i,j,40,40);
+//                    GameMap.map[brickWall.getX()/40][brickWall.getY()/40]=ObjType.hitWall;
+//                    GameMap.walls.put(brickWall.getId(),brickWall);
+//                }
+//            }
             //双人模式
 //        if (mode == Mode.Double) {
 //            coord = randomCoord();
@@ -171,7 +164,9 @@ public class GamePanel extends JPanel {
 //        }
 
     }
-    public GamePanel(Mode mode) {
+    public GamePanel(Mode mode,int level,JFrame play) {
+        this.level=level;
+        this.play=play;
         setForeground(Color.WHITE);
         setBackground(Color.BLACK);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -197,17 +192,17 @@ public class GamePanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
 
         //绘画墙体
-        for (Wall wall : walls.values()) {
+        for (Wall wall : GameMap.walls.values()) {
             wall.draw(g2);
         }
 
         //绘制坦克
-        for (Tank tank : tanks.values()) {
+        for (Tank tank : GameMap.tanks.values()) {
             tank.draw(g2);
         }
 
         //子弹绘画
-        for (Shell shell : shells.values()) {
+        for (Shell shell : GameMap.shells.values()) {
             shell.draw(g2);
         }
 
@@ -248,7 +243,7 @@ public class GamePanel extends JPanel {
     /**
      * 监听按键
      */
-    private static class KeyBoardListener extends KeyAdapter {
+    private class KeyBoardListener extends KeyAdapter {
 
 
         @Override
@@ -257,10 +252,13 @@ public class GamePanel extends JPanel {
             int key = e.getKeyCode();
             //区分两种不同的按键
             //ASDWG为P2的按键
-            //上下左右+SHIFT为P1按键
+            //上下左右+小键盘0为P1按键
+            if(key==KeyEvent.VK_N){
+              nextLevel();
+            }
             if (key < 65) {
-                if (key != KeyEvent.VK_SHIFT && tanks.get(P1_TAG) != null) {
-                    PlayerTank p1= (PlayerTank) tanks.get(P1_TAG);
+                if (key != KeyEvent.VK_SHIFT && GameMap.tanks.get(P1_TAG) != null) {
+                    PlayerTank p1= (PlayerTank) GameMap.tanks.get(P1_TAG);
                     p1.setKey(key);
                     p1.setMove(true);
                 }
@@ -268,7 +266,7 @@ public class GamePanel extends JPanel {
                     ShutDown();
                 }
             } else {
-                if (key != KeyEvent.VK_G && tanks.get(P2_TAG) != null) {
+                if (key != KeyEvent.VK_G && GameMap.tanks.get(P2_TAG) != null) {
                     switch (key) {
                         case KeyEvent.VK_W:
                             key = KeyEvent.VK_UP;
@@ -283,7 +281,7 @@ public class GamePanel extends JPanel {
                             key = KeyEvent.VK_RIGHT;
                             break;
                     }
-                    PlayerTank p2= (PlayerTank) tanks.get(P2_TAG);
+                    PlayerTank p2= (PlayerTank) GameMap.tanks.get(P2_TAG);
                     p2.setKey(key);
                     p2.setMove(true);
                 }
@@ -295,11 +293,11 @@ public class GamePanel extends JPanel {
             super.keyReleased(e);
             int key = e.getKeyCode();
             if (key < 65) {
-                checkNextMove(key, tanks.get(P1_TAG), null, P1_TAG);
+                checkNextMove(key, GameMap.tanks.get(P1_TAG), null, P1_TAG);
             }
             else if(key==KeyEvent.VK_NUMPAD0){
-                PlayerTank p1= (PlayerTank) tanks.get(P1_TAG);
-                if(GamePanel.shells.get(P1_TAG)!=null){
+                PlayerTank p1= (PlayerTank) GameMap.tanks.get(P1_TAG);
+                if(GameMap.shells.get(P1_TAG)!=null){
                     System.out.println("当前仍有子弹在飞行！射击失败");
                     return;
                 }
@@ -323,17 +321,17 @@ public class GamePanel extends JPanel {
                         key = KeyEvent.VK_SHIFT;
                         break;
                 }
-                checkNextMove(key, null, tanks.get(P2_TAG), P2_TAG);
+                checkNextMove(key, null, GameMap.tanks.get(P2_TAG), P2_TAG);
             }
         }
 
         private void checkNextMove(int key, Tank tank, Tank o, int p1Tag) {
             if (tank != o) {
-                if (key != KeyEvent.VK_SHIFT && key == tanks.get(p1Tag).getKey()) {
-                    PlayerTank p1= (PlayerTank) tanks.get(p1Tag);
+                if (key != KeyEvent.VK_SHIFT && key == GameMap.tanks.get(p1Tag).getKey()) {
+                    PlayerTank p1= (PlayerTank) GameMap.tanks.get(p1Tag);
                     p1.setMove(false);//若true则连续移动
                 } else {
-                    PlayerTank p1= (PlayerTank) tanks.get(p1Tag);
+                    PlayerTank p1= (PlayerTank) GameMap.tanks.get(p1Tag);
                     p1.GetMoveDirection(key);
 
                 }
@@ -343,15 +341,25 @@ public class GamePanel extends JPanel {
     public static void ShutDown() {
         GamePanel.live.getAndSet(false);
         //停止所有的线程
-        for (Tank tank : GamePanel.tanks.values()) {
+        for (Tank tank : GameMap.tanks.values()) {
             tank.setAlive(false);
         }
         executorService.shutdown();
         executorService = Executors.newCachedThreadPool();
-//        Game.walls.clear();
-//        Game.missile.clear();
-        GamePanel.tanks.clear();
-        GamePanel.walls.clear();
-        GamePanel.shells.clear();
+        GameMap.tanks.clear();
+        GameMap.walls.clear();
+        GameMap.shells.clear();
+
+    }
+    private void nextLevel(){
+        level++;
+        play.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setVisible(false);
+        LevelPanel levelPanel=new LevelPanel(level,play,mode);
+        play.setBounds(levelPanel.getBounds());
+        play.setContentPane(levelPanel);
+        play.setVisible(true);
+        play.setResizable(false);
+        levelPanel.requestFocus();
     }
 }

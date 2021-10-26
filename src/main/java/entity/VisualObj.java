@@ -15,7 +15,7 @@ public abstract class VisualObj {
     protected int x;
     protected int y;
     protected BufferedImage image;
-    protected boolean alive=true;
+    protected boolean alive=true;//是否存在
     protected int height;
     protected int width;
     public VisualObj(int x, int y, int width, int height) {

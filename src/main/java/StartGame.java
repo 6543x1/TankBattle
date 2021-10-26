@@ -1,5 +1,6 @@
 import myEnum.Mode;
 import panel.GamePanel;
+import panel.LevelPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,13 +30,13 @@ public class StartGame extends JFrame {
     private StartGame() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width - 600) / 3, (screenSize.height - 600) / 3, 600, 600);
+        setBounds((screenSize.width - 600) / 3, (screenSize.height - 600) / 3, 900, 600);
         getContentPane().setLayout(new BorderLayout(0, 0));
 
         JPanel panel = new JPanel();
         panel.setForeground(Color.GRAY);
-        panel.setBackground(Color.WHITE);
-        getContentPane().add(panel);
+        panel.setBackground(Color.white);//生效的啊？
+        getContentPane().add(panel);//将当前panel加入JFrame
         panel.setLayout(null);
 
         System.out.println(StartGame.class.getResource("/").getPath());
@@ -59,7 +60,7 @@ public class StartGame extends JFrame {
         btnNewButton_1.setBounds(224, 298, 144, 34);
         btnNewButton_1.setIcon(new ImageIcon(StartGame.class.getResource("/img/DoublePlayer.gif")));
         btnNewButton_1.setBorderPainted(false);
-        //btnNewButton_1.addActionListener(e -> play(Mode.Double));
+        btnNewButton_1.addActionListener(e -> play(Mode.Double));
         panel.add(btnNewButton_1);
 
     }
@@ -69,35 +70,27 @@ public class StartGame extends JFrame {
         play = new JFrame("Live" + ":" + PlayTime++ + "s");
         play.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(false);
-        gamePanel = new GamePanel(mode);
-        play.setContentPane(gamePanel);
-        play.setBounds(gamePanel.getBounds());
+        LevelPanel levelPanel=new LevelPanel(1,play,mode);
+        play.setBounds(levelPanel.getBounds());
+        play.setContentPane(levelPanel);
         play.setVisible(true);
         play.setResizable(false);
-        gamePanel.requestFocus();
-        new Thread(new CheckLive()).start();
+        levelPanel.requestFocus();
+        //可能要由level去启动GamePanel...要不然后面会覆盖前面，而且不能休眠当前线程
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        gamePanel = new GamePanel(mode);
+//        play.setContentPane(gamePanel);
+//        play.setBounds(gamePanel.getBounds());
+//        play.setVisible(true);
+//        play.setResizable(false);
+//        gamePanel.requestFocus();
+//        new Thread(new CheckLive()).start();
     }
 
-
-    class CheckLive implements Runnable {
-        @Override
-        public void run() {
-            while (GamePanel.live.get()) {
-                play.setTitle("TankBattle" + " Live" + PlayTime++ + "s");
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            gamePanel.removeAll();
-            play.remove(gamePanel);
-            play.dispose();
-            play = null;
-            gamePanel = null;
-            setVisible(true);
-        }
-    }
 
 }
 
