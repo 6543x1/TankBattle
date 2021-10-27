@@ -8,10 +8,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-public abstract class VisualObj {
+public abstract class VisualObj implements Serializable {
     protected int x;
     protected int y;
     protected BufferedImage image;

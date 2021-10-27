@@ -22,7 +22,7 @@ public class GamePanel extends JPanel {
     private Image OffScreenImage;
     private JFrame play;
     //坦克的移动区域
-    private final static int screenWidth = 900;
+    private final static int screenWidth = 600;
     private final static int screenHeight = 600;
     private int level;
     //坦克的移动
@@ -171,7 +171,7 @@ public class GamePanel extends JPanel {
         setBackground(Color.BLACK);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds((d.width-screenWidth)/2, (d.height-screenHeight)/2, screenWidth, screenHeight);
-        setSize(920,640);//Panel大小实际上会超出窗口大小......
+        setSize(620,640);//Panel大小实际上会超出窗口大小......
         setLayout(null);
         GamePanel.mode = mode;
         initMap();

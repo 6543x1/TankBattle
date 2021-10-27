@@ -1,9 +1,11 @@
-import entity.Coordinate;
+import entity.*;
 import myEnum.Direction;
 import myEnum.ObjType;
 import org.junit.Test;
 
+import java.io.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static panel.GamePanel.*;
@@ -376,6 +378,42 @@ public class MyTest {
         }
         // 排序后:
       //  System.out.println(Arrays.toString(ns));
+    }
+    @Test
+    public void saveMapToFile(){
+        Coordinate coord=new Coordinate(10,6);
+//        while (map[coord.y][coord.x]==WALL){
+//            coord=randomCoord();
+//        }
+        BrickWall brickWall=new BrickWall(coord.hashCode(),coord.x*40,coord.y*40,40,40);
+
+//        GameMap.map[coord.y][coord.x] =ObjType.hitWall;
+        GameMap.walls.put(brickWall.getId(),brickWall);
+        coord.x=430;
+        coord.y=560;
+        Base base=new Base(6,coord.x,coord.y,55,40);
+        GameMap.walls.put(6,base);//这样让基地的血量可以被打印出来
+        try {
+            FileOutputStream fileOutputStream=new FileOutputStream("my.dat");
+            ObjectOutputStream objectOutputStream=new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(GameMap.walls);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+            System.out.println("Write Success!");
+            FileInputStream fileInputStream=new FileInputStream("my.dat");
+            ObjectInputStream objectInputStream=new ObjectInputStream(fileInputStream);
+            try {
+                ConcurrentHashMap<Integer, Wall> concurrentHashMap= (ConcurrentHashMap<Integer, Wall>) objectInputStream.readObject();
+                System.out.println(concurrentHashMap);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 
