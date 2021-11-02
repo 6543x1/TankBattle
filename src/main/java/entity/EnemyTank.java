@@ -2,6 +2,7 @@ package entity;
 
 import myEnum.Direction;
 import myEnum.ObjType;
+import utils.ImageUtils;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -81,10 +82,17 @@ public class EnemyTank extends Tank {
                         System.out.println("Path="+result);
                         System.out.println("Tank coordinate:"+x/40+","+y/40);
                         if(next!=null){
-                        System.out.println(next);}
+                        System.out.println(next);
+                        System.out.println(GameMap.map[next.getX()][next.getY()]);
+                        }
                         //获得下一个路径
                         if (null != result && result.size() != 0 && null == next) {
                             next = result.pop();
+                        }
+                        if(GameMap.map[next.getX()][next.getY()]!=ObjType.air&&GameMap.map[next.getX()][next.getY()]!=ObjType.surface){
+                            System.out.println("Not able to Move to"+next.getX()+","+next.getY());
+                            Thread.sleep(1000);
+                            stackFuture = executorService.submit(new TaskWithPath());
                         }
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
@@ -95,7 +103,7 @@ public class EnemyTank extends Tank {
                 //TankMove();
                 Coordinate coord=new Coordinate(x/40,y/40);
                 if (null != next && !next.equals(coord)) {
-                    if (Math.abs(coord.x - next.x) > 1 || Math.abs(coord.y - next.y) > 1) {
+                    if (Math.abs(coord.getX() - next.getX()) > 1 || Math.abs(coord.getY() - next.getY()) > 1) {
                         System.out.println(Thread.currentThread().getName() + ":" + coord.toString() + "->" + next.toString());
                     }
                     GetMoveDirection(GetDirection(coord, next));
@@ -150,12 +158,12 @@ public class EnemyTank extends Tank {
         if (next == null) {
             return RandomMove();
         }
-        if (coord.x - next.x <= -1) {
+        if (coord.getX() - next.getX() <= -1) {
             n = KeyEvent.VK_RIGHT;
-        } else if (coord.x - next.x >= 1) {
+        } else if (coord.getX() - next.getX() >= 1) {
             n = KeyEvent.VK_LEFT;
         } else {
-            if (coord.y - next.y <= -1) {
+            if (coord.getY() - next.getY() <= -1) {
                 n = KeyEvent.VK_DOWN;
             } else {
                 n = KeyEvent.VK_UP;
@@ -210,10 +218,10 @@ public class EnemyTank extends Tank {
 //                    map[t_y2][t_x2] = map[t_y][t_x];
 //                    map[t_y][t_x] = ObjType.air;
 //                }//运行到此处出现问题，死锁了？
-                GameMap.map[t_y2][t_x2] = GameMap.map[t_y][t_x];
-                GameMap.map[t_y][t_x] = ObjType.air;
-                // coord.x = t_x;
-                // coord.y = t_y;
+                //GameMap.map[t_y2][t_x2] = GameMap.map[t_y][t_x]; 这句话很可能导致异常
+                //GameMap.map[t_y][t_x] = ObjType.air;//非常有可能是这句话导致地图异常
+                // coord.getX() = t_x;
+                // coord.getY() = t_y;
 //                if (id == Game.PLAY_1) Game.printMap();
 
                 if (!executorService.isShutdown()) {
@@ -223,6 +231,20 @@ public class EnemyTank extends Tank {
 
 
             }
+        }
+        switch (curDirection){
+            case UP:
+                setImage(ImageUtils.enemy1upImage);
+                break;
+            case DOWN:
+                setImage(ImageUtils.enemy1downImage);
+                break;
+            case LEFT:
+                setImage(ImageUtils.enemy1leftImage);
+                break;
+            case RIGHT:
+                setImage(ImageUtils.enemy1rightImage);
+                break;
         }
     }
 
@@ -252,12 +274,12 @@ public class EnemyTank extends Tank {
         Queue<Coordinate> queue = new LinkedBlockingQueue<>();
         HashSet<Coordinate> checkSet=new HashSet<>();
         Coordinate coordinate = new Coordinate(x/width, y/height);
-        int[] a= {2,3,4,5,6};
-        int b=Arrays.stream(a).max().getAsInt();
+//        int[] a= {2,3,4,5,6};
+//        int b=Arrays.stream(a).max().getAsInt();
         checkSet.add(coordinate);
         queue.offer(coordinate);//当前坐标入队，若入队失败抛出异常
         Coordinate last = null;
-        boolean flag;
+        boolean flag=false;
         while (!queue.isEmpty()) {
             Coordinate point = queue.poll();//队头出列
            // System.out.println("t:"+point);
@@ -265,8 +287,8 @@ public class EnemyTank extends Tank {
 //            插入：add(e) 　　  offer(e)  插入一个元素
 //            移除：remove()      poll()      移除和返回队列的头
 //            检查：element()     peek()    返回但不移除队列的头。
-            int tx = point.x;
-            int ty = point.y;
+            int tx = point.getX();
+            int ty = point.getY();
             int i;
             //遍历所有的方向
 //            Random r = new Random(System.currentTimeMillis());
@@ -308,7 +330,15 @@ public class EnemyTank extends Tank {
                 if (flag) {
                     //通过数组，判断是否这一点可以走（2、3应当替换成对应的Obj的数字）
                     //数组越界 应当/40
-                    flag = (GameMap.map[ty][tx] == ObjType.air || GameMap.map[ty][tx] == ObjType.surface);
+                    if(GameMap.map[tx][ty] != ObjType.air && GameMap.map[tx][ty] != ObjType.surface){
+                        flag=false;
+                    }
+//                    if(tx==10&&ty==6){
+//                        System.out.println("10,6 flag="+flag);
+//                    }
+//                    if(flag){
+//                        System.out.printf("GameMapPoint:%d,%d,type:%s\n",tx,ty,GameMap.map[tx][ty]);
+//                    }
                 }
                 //该点可以用
                 if (flag) {
@@ -319,8 +349,8 @@ public class EnemyTank extends Tank {
                 }
                 checkSet.add(nextStep);
                 //重新选择方向遍历
-                tx = point.x;
-                ty = point.y;
+                tx = point.getX();
+                ty = point.getY();
             }
             //如果没有四个方向都遍历完就跳出（），说明已经找到了终点
             if (i != 4) {

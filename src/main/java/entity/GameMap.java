@@ -11,4 +11,5 @@ public class GameMap {
     public volatile static ConcurrentHashMap<Integer, Tank> tanks = new ConcurrentHashMap<>();
     public volatile static ConcurrentHashMap<Integer,Shell> shells=new ConcurrentHashMap<>();
     public volatile static ConcurrentHashMap<Integer,Wall> walls=new ConcurrentHashMap<>();
+    public volatile static ConcurrentHashMap<Integer,Surface> surfaces=new ConcurrentHashMap<>();
 }

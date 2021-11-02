@@ -181,8 +181,8 @@ public abstract class Tank extends VisualObj {
 //                    map[t_y2][t_x2] = map[t_y][t_x];
 //                    map[t_y][t_x] = ObjType.air;
 //                }//运行到此处出现问题，死锁了？
-                map[t_y2][t_x2] = map[t_y][t_x];//此处会导致移动到边界时异常,不是会回滚位置吗？
-                map[t_y][t_x] = ObjType.air;
+                //map[t_y2][t_x2] = map[t_y][t_x];//此处会导致移动到边界时异常,不是会回滚位置吗？
+                //map[t_y][t_x] = ObjType.air;不要这么做，因为会导致寻路系统异常
                 // coord.x = t_x;
                 // coord.y = t_y;
 //                if (id == Game.PLAY_1) Game.printMap();

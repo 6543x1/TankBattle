@@ -9,8 +9,8 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Coordinate {
     //二维地图坐标，用于寻路系统
-    public int x;
-    public int y;
+    private int x;
+    private int y;
     public Coordinate nextPoint;
 
     public Coordinate(int x,int y){

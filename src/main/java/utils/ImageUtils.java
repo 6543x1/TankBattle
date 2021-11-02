@@ -15,6 +15,13 @@ public class ImageUtils {
     public static BufferedImage base;
     public static BufferedImage brokenBase;
     public static BufferedImage[] born;
+    public static BufferedImage steelWall;
+    public static BufferedImage halfBrickWall;
+    public static BufferedImage enemy1upImage; //向上移动时的图片
+    public static BufferedImage enemy1downImage;//向下移动时的图片
+    public static BufferedImage enemy1rightImage;//向右移动时的图片
+    public static BufferedImage enemy1leftImage;//向左移动时的图片
+    public static BufferedImage grass;
     static {
         try {
             p1upImage = ImageIO.read(GamePanel.class.getResource("/img/p1tankU.gif").openStream());
@@ -28,7 +35,13 @@ public class ImageUtils {
             for(int i=0;i<4;i++){
                 born[i]=ImageIO.read(GamePanel.class.getResource("/img/born"+(i+1)+".gif").openStream());
             }
-
+            steelWall=ImageIO.read(GamePanel.class.getResource("/img/steels.gif").openStream());
+            halfBrickWall=ImageIO.read(GamePanel.class.getResource("/img/halfBrickWall.gif").openStream());
+            enemy1upImage = ImageIO.read(GamePanel.class.getResource("/img/enemy1U.gif").openStream());
+            enemy1downImage=ImageIO.read((GamePanel.class.getResource("/img/enemy1D.gif").openStream()));
+            enemy1leftImage=ImageIO.read((GamePanel.class.getResource("/img/enemy1L.gif").openStream()));
+            enemy1rightImage=ImageIO.read((GamePanel.class.getResource("/img/enemy1R.gif").openStream()));
+            grass=ImageIO.read(GamePanel.class.getResource("/img/grass.png").openStream());
 
         } catch (IOException e) {
             System.out.println("IOException");

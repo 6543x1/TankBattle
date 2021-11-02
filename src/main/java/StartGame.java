@@ -1,11 +1,13 @@
 import myEnum.Mode;
 import panel.GamePanel;
 import panel.LevelPanel;
+import panel.SettingsPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 
 public class StartGame extends JFrame {
     public static ExecutorService executorService = Executors.newCachedThreadPool();
@@ -63,6 +65,13 @@ public class StartGame extends JFrame {
         btnNewButton_1.addActionListener(e -> play(Mode.Double));
         panel.add(btnNewButton_1);
 
+        JButton jButton=new JButton("");
+        jButton.setBounds(224, 353, 150, 33);
+        jButton.setIcon(new ImageIcon(StartGame.class.getResource("/img/settings2.png")));
+        jButton.setBorderPainted(false);
+        jButton.addActionListener(e->settings());
+        panel.add(jButton);
+
     }
 
     private void play(Mode mode) {
@@ -89,6 +98,17 @@ public class StartGame extends JFrame {
 //        play.setResizable(false);
 //        gamePanel.requestFocus();
 //        new Thread(new CheckLive()).start();
+    }
+    private void settings(){
+        play = new JFrame("游戏设置");
+        play.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setVisible(false);
+        JPanel jPanel=new SettingsPanel(play);
+        play.setBounds(jPanel.getBounds());
+        play.setContentPane(jPanel);
+        play.setVisible(true);
+        play.setResizable(false);
+        jPanel.requestFocus();
     }
 
 

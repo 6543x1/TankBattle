@@ -69,7 +69,7 @@ public class Shell extends VisualObj {
             if(this.isCollided(wall)){
                 alive=false;
                 if(wall.getHp()==-1){//-1为不可击毁
-                    continue;
+                    return true;
                 }
                 wall.hp-=damage;//因为Shell继承自visualObj Wall也是 而且protected 所以可以直接访问....
                 if(wall.getHp()<=0&&!(wall instanceof Base)){

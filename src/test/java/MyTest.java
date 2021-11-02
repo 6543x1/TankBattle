@@ -3,6 +3,7 @@ import myEnum.Direction;
 import myEnum.ObjType;
 import org.junit.Test;
 
+import javax.sound.sampled.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,8 +47,8 @@ public class MyTest {
 //            插入：add(e) 　　  offer(e)  插入一个元素
 //            移除：remove()      poll()      移除和返回队列的头
 //            检查：element()     peek()    返回但不移除队列的头。
-            int tx = point.x;
-            int ty = point.y;
+            int tx = point.getX();
+            int ty = point.getY();
             int i;
             //遍历所有的方向
 //            Random r = new Random(System.currentTimeMillis());
@@ -99,24 +100,24 @@ public class MyTest {
                     //数组越界 应当/40
                     flag = (map[ty][tx] == ObjType.air || map[ty][tx] == ObjType.surface);
 //                    if (flag) {
-//                        Coordinate temp = new Coordinate(z.x, z.y);
+//                        Coordinate temp = new Coordinate(z.getX(), z.getY());
 //                        System.out.println("temp:"+temp);
 //                        switch (direction) {
 //                            case UP:
-//                                temp.y -= 1;
+//                                temp.getY() -= 1;
 //                                break;
 //                            case LEFT:
-//                                temp.x -= 1;
+//                                temp.getX() -= 1;
 //                                break;
 //                            case RIGHT:
-//                                temp.x += 1;
+//                                temp.getX() += 1;
 //                                break;
 //                            case DOWN:
-//                                temp.y += 1;
+//                                temp.getY() += 1;
 //                                break;
 //                        }
-//                        if(!(temp.x<0||temp.y<0||temp.x>=borderX||temp.y>=borderY)){
-//                            flag = (map[temp.y][temp.x] == ObjType.air || map[temp.y][temp.x] == ObjType.hitWall || map[temp.y][temp.x] == ObjType.playerTank || map[temp.y][temp.x] != ObjType.enemyTank);
+//                        if(!(temp.getX()<0||temp.getY()<0||temp.getX()>=borderX||temp.getY()>=borderY)){
+//                            flag = (map[temp.getY()][temp.getX()] == ObjType.air || map[temp.getY()][temp.getX()] == ObjType.hitWall || map[temp.getY()][temp.getX()] == ObjType.playerTank || map[temp.getY()][temp.getX()] != ObjType.enemyTank);
 //                        }
 //                        else{
 //                            flag=false;
@@ -134,8 +135,8 @@ public class MyTest {
                 }
                 isCheck.add(z);
                 //重新选择方向遍历
-                tx = point.x;
-                ty = point.y;
+                tx = point.getX();
+                ty = point.getY();
             }
             //如果没有四个方向都遍历完就跳出（），说明已经找到了终点
             if (i != 4) {
@@ -170,8 +171,8 @@ public class MyTest {
         boolean flag;
         while (!d_q.isEmpty()) {
             Coordinate t = d_q.poll();
-            int tx = t.x;
-            int ty = t.y;
+            int tx = t.getX();
+            int ty = t.getY();
             int i;
             //遍历所有的方向
 //            Random r = new Random(System.currentTimeMillis());
@@ -211,22 +212,22 @@ public class MyTest {
                     //通过数组，判断是否这一点可以走
                     flag = (map[ty][tx] == ObjType.air || map[ty][tx] == ObjType.wall);
                     if (flag) {
-                        Coordinate temp = new Coordinate(z.x, z.y);
+                        Coordinate temp = new Coordinate(z.getX(), z.getY());
                         switch (direction) {
                             case UP:
-                                temp.y -= 1;
+                                temp.setY(temp.getY()-1);
                                 break;
                             case LEFT:
-                                temp.x -= 1;
+                                temp.setX(temp.getX()-1);
                                 break;
                             case RIGHT:
-                                temp.x += 1;
+                                temp.setX(temp.getX() + 1);
                                 break;
                             case DOWN:
-                                temp.y += 1;
+                                temp.setY(temp.getY()+1);
                                 break;
                         }
-                        flag = (map[temp.y][temp.x] == ObjType.air);
+                        flag = (map[temp.getY()][temp.getX()] == ObjType.air);
                     }
                 }
                 //该点可以用
@@ -238,8 +239,8 @@ public class MyTest {
                 }
                 IsMove.add(z);
                 //重新选择方向遍历
-                tx = t.x;
-                ty = t.y;
+                tx = t.getX();
+                ty = t.getY();
             }
             //如果没有四个方向都遍历完就跳出，说明已经找到了终点
             if (i != 4) {
@@ -278,21 +279,21 @@ public class MyTest {
             for (int i = 0; i < 4; i++) {
                 switch (i) {
                     case 0://向上
-                        temp = new Coordinate(point.x, point.y - 1);
+                        temp = new Coordinate(point.getX(), point.getY() - 1);
                         break;
                     case 1://向下
-                        temp = new Coordinate(point.x, point.y + 1);
+                        temp = new Coordinate(point.getX(), point.getY() + 1);
                         break;
                     case 2:
-                        temp = new Coordinate(point.x - 1, point.y);
+                        temp = new Coordinate(point.getX() - 1, point.getY());
                         break;
                     case 3:
-                        temp = new Coordinate(point.x + 1, point.y);
+                        temp = new Coordinate(point.getX() + 1, point.getY());
                         break;
                     default:
                         temp = new Coordinate(0, 0);
                 }
-                if (temp.x < 0 || temp.y < 0 || temp.x >= 14 || temp.y >= 22) {
+                if (temp.getX() < 0 || temp.getY() < 0 || temp.getX() >= 14 || temp.getY() >= 22) {
                     continue;
                 }
                 if (temp.equals(mySelf)) {
@@ -382,16 +383,16 @@ public class MyTest {
     @Test
     public void saveMapToFile(){
         Coordinate coord=new Coordinate(10,6);
-//        while (map[coord.y][coord.x]==WALL){
+//        while (map[coord.getY()][coord.getX()]==WALL){
 //            coord=randomCoord();
 //        }
-        BrickWall brickWall=new BrickWall(coord.hashCode(),coord.x*40,coord.y*40,40,40);
+        BrickWall brickWall=new BrickWall(coord.hashCode(),coord.getX()*40,coord.getY()*40,40,40);
 
-//        GameMap.map[coord.y][coord.x] =ObjType.hitWall;
+//        GameMap.map[coord.getY()][coord.getX()] =ObjType.hitWall;
         GameMap.walls.put(brickWall.getId(),brickWall);
-        coord.x=430;
-        coord.y=560;
-        Base base=new Base(6,coord.x,coord.y,55,40);
+        coord.setX(430);
+        coord.setY(560);
+        Base base=new Base(6,coord.getX(),coord.getY(),55,40);
         GameMap.walls.put(6,base);//这样让基地的血量可以被打印出来
         try {
             FileOutputStream fileOutputStream=new FileOutputStream("my.dat");
@@ -414,6 +415,51 @@ public class MyTest {
         }catch (IOException e){
             e.printStackTrace();
         }
+    }
+    @Test
+    public void audioPlayTest() throws Exception{
+        //1 获取你要播放的音乐文件
+        File file = new File("D:\\idea-workspace\\TankBattle\\src\\main\\resources\\img\\start.wav");
+        //2、定义一个AudioInputStream用于接收输入的音频数据
+        AudioInputStream am;
+        //3、使用AudioSystem来获取音频的音频输入流(处理（抛出）异常)
+        am = AudioSystem.getAudioInputStream(file);
+        //4、使用AudioFormat来获取AudioInputStream的格式
+        AudioFormat af = am.getFormat();
+        //5、一个源数据行
+        SourceDataLine sd ;
+        //6、获取受数据行支持的音频格式DataLine.info
+        //DataLine.Info dl = new DataLine.Info(SourceDataLine.class, af);
+        //7、获取与上面类型相匹配的行 写到源数据行里 二选一
+        sd = AudioSystem.getSourceDataLine(af);//便捷写法
+        //sd = (SourceDataLine) AudioSystem.getLine(dl);
+        //8、打开具有指定格式的行，这样可以使行获得资源并进行操作
+        sd.open();
+        //9、允许某个数据行执行数据i/o
+        sd.start();
+        //10、写数据
+        int sumByteRead = 0; //读取的总字节数
+        byte [] b = new byte[320];//设置字节数组大小
+        //11、从音频流读取指定的最大数量的数据字节，并将其放入给定的字节数组中。
+//        while (sumByteRead != -1) {//-1代表没有 不等于-1时就无限读取
+//            sumByteRead = am.read(b, 0, b.length);//12、读取哪个数组
+//            if(sumByteRead >= 0 ) {//13、读取了之后将数据写入混频器,开始播放
+//                sd.write(b, 0, b.length);
+//
+//            }
+//        }
+        //上面只响一次
+        //关闭
+        sd.drain();
+        sd.close();
+        Clip clip = AudioSystem.getClip();
+        clip.open(am);
+        clip.start();
+        clip.loop(Clip.LOOP_CONTINUOUSLY);//不设置这句话就只放一遍
+
+        //只要程序一直运行，这个就会不停响下去
+        Thread.sleep(10000);
+
     }
 
 

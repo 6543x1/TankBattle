@@ -16,7 +16,7 @@ public abstract class VisualObj implements Serializable {
     protected int x;
     protected int y;
     protected BufferedImage image;
-    protected boolean alive=true;//是否存在
+    protected boolean alive;//是否存在
     protected int height;
     protected int width;
     public VisualObj(int x, int y, int width, int height) {
@@ -24,6 +24,7 @@ public abstract class VisualObj implements Serializable {
         this.y = y;
         this.width = width;
         this.height = height;
+        this.alive=true;
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);//实例化图片
     }
 
@@ -51,7 +52,7 @@ public abstract class VisualObj implements Serializable {
         return new Rectangle(x, y, width, height);
     }
 
-    boolean isCollided(VisualObj visualObj) {
+    public boolean isCollided(VisualObj visualObj) {
         return this.getRect().intersects(visualObj.getRect());//判断两者是否碰撞
     }
 }
