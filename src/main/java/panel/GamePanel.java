@@ -22,7 +22,7 @@ public class GamePanel extends JPanel {
     private Image OffScreenImage;
     private JFrame play;
     //坦克的移动区域
-    private final static int screenWidth = 700;
+    private final static int screenWidth = 720;
     private final static int screenHeight = 600;
     private int level;
     //坦克的移动
@@ -145,7 +145,7 @@ public class GamePanel extends JPanel {
         GameMap.map[coord.getX()][coord.getY()] = ObjType.wall;
         GameMap.walls.put(brickWall.getId(), brickWall);
         GameMap.walls.put(steelWall.getId(), steelWall);
-        coord.setX(280);
+        coord.setX(320);
         coord.setY(560);
         Base base = new Base(-1, coord.getX(), coord.getY(), 55, 40);
         GameMap.walls.put(base.getId(), base);//这样让基地的血量可以被打印出来

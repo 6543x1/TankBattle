@@ -2,9 +2,12 @@ import entity.*;
 import myEnum.Direction;
 import myEnum.ObjType;
 import org.junit.Test;
+import utils.SettingsUtils;
 
 import javax.sound.sampled.*;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -215,16 +218,16 @@ public class MyTest {
                         Coordinate temp = new Coordinate(z.getX(), z.getY());
                         switch (direction) {
                             case UP:
-                                temp.setY(temp.getY()-1);
+                                temp.setY(temp.getY() - 1);
                                 break;
                             case LEFT:
-                                temp.setX(temp.getX()-1);
+                                temp.setX(temp.getX() - 1);
                                 break;
                             case RIGHT:
                                 temp.setX(temp.getX() + 1);
                                 break;
                             case DOWN:
-                                temp.setY(temp.getY()+1);
+                                temp.setY(temp.getY() + 1);
                                 break;
                         }
                         flag = (map[temp.getY()][temp.getX()] == ObjType.air);
@@ -358,12 +361,12 @@ public class MyTest {
     public void BubbleTest() {
         //int[] ns = {28, 12, 89, 73, 65, 18, 96, 50, 8, 36};
         //int[] ns={9,8,7,6,5,4,3,2,1,0};
-        int[] ns={0,1,2,9,4,5,6,6,7,8};
+        int[] ns = {0, 1, 2, 9, 4, 5, 6, 6, 7, 8};
         // 排序前:
         boolean isSwap = false;
         //System.out.println(Arrays.toString(ns));
         for (int i = 0; i < ns.length - 1; i++) {
-            System.out.println("i="+i+","+"j<"+(ns.length-i-1));
+            System.out.println("i=" + i + "," + "j<" + (ns.length - i - 1));
             for (int j = 0; j < ns.length - i - 1; j++) {
                 if (ns[j] > ns[j + 1]) {
                     // 交换ns[j]和ns[j+1]:
@@ -374,37 +377,38 @@ public class MyTest {
                 }
             }
 //          z
-            isSwap=false;
+            isSwap = false;
             System.out.println(Arrays.toString(ns));
         }
         // 排序后:
-      //  System.out.println(Arrays.toString(ns));
+        //  System.out.println(Arrays.toString(ns));
     }
+
     @Test
-    public void saveMapToFile(){
-        Coordinate coord=new Coordinate(10,6);
+    public void saveMapToFile() {
+        Coordinate coord = new Coordinate(10, 6);
 //        while (map[coord.getY()][coord.getX()]==WALL){
 //            coord=randomCoord();
 //        }
-        BrickWall brickWall=new BrickWall(coord.hashCode(),coord.getX()*40,coord.getY()*40,40,40);
+        BrickWall brickWall = new BrickWall(coord.hashCode(), coord.getX() * 40, coord.getY() * 40, 40, 40);
 
 //        GameMap.map[coord.getY()][coord.getX()] =ObjType.hitWall;
-        GameMap.walls.put(brickWall.getId(),brickWall);
+        GameMap.walls.put(brickWall.getId(), brickWall);
         coord.setX(430);
         coord.setY(560);
-        Base base=new Base(6,coord.getX(),coord.getY(),55,40);
-        GameMap.walls.put(6,base);//这样让基地的血量可以被打印出来
+        Base base = new Base(6, coord.getX(), coord.getY(), 55, 40);
+        GameMap.walls.put(6, base);//这样让基地的血量可以被打印出来
         try {
-            FileOutputStream fileOutputStream=new FileOutputStream("my.dat");
-            ObjectOutputStream objectOutputStream=new ObjectOutputStream(fileOutputStream);
+            FileOutputStream fileOutputStream = new FileOutputStream("my.dat");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(GameMap.walls);
             objectOutputStream.flush();
             objectOutputStream.close();
             System.out.println("Write Success!");
-            FileInputStream fileInputStream=new FileInputStream("my.dat");
-            ObjectInputStream objectInputStream=new ObjectInputStream(fileInputStream);
+            FileInputStream fileInputStream = new FileInputStream("my.dat");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             try {
-                ConcurrentHashMap<Integer, Wall> concurrentHashMap= (ConcurrentHashMap<Integer, Wall>) objectInputStream.readObject();
+                ConcurrentHashMap<Integer, Wall> concurrentHashMap = (ConcurrentHashMap<Integer, Wall>) objectInputStream.readObject();
                 System.out.println(concurrentHashMap);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -412,14 +416,15 @@ public class MyTest {
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     @Test
-    public void audioPlayTest() throws Exception{
+    public void audioPlayTest() throws Exception {
         //1 获取你要播放的音乐文件
-        File file = new File("D:\\idea-workspace\\TankBattle\\src\\main\\resources\\img\\start.wav");
+        File file = new File("D:\\idea-workspace\\TankBattle\\src\\main\\resources\\sound\\start.wav");
         //2、定义一个AudioInputStream用于接收输入的音频数据
         AudioInputStream am;
         //3、使用AudioSystem来获取音频的音频输入流(处理（抛出）异常)
@@ -427,7 +432,7 @@ public class MyTest {
         //4、使用AudioFormat来获取AudioInputStream的格式
         AudioFormat af = am.getFormat();
         //5、一个源数据行
-        SourceDataLine sd ;
+        SourceDataLine sd;
         //6、获取受数据行支持的音频格式DataLine.info
         //DataLine.Info dl = new DataLine.Info(SourceDataLine.class, af);
         //7、获取与上面类型相匹配的行 写到源数据行里 二选一
@@ -439,7 +444,7 @@ public class MyTest {
         sd.start();
         //10、写数据
         int sumByteRead = 0; //读取的总字节数
-        byte [] b = new byte[320];//设置字节数组大小
+        byte[] b = new byte[320];//设置字节数组大小
         //11、从音频流读取指定的最大数量的数据字节，并将其放入给定的字节数组中。
 //        while (sumByteRead != -1) {//-1代表没有 不等于-1时就无限读取
 //            sumByteRead = am.read(b, 0, b.length);//12、读取哪个数组
@@ -460,6 +465,96 @@ public class MyTest {
         //只要程序一直运行，这个就会不停响下去
         Thread.sleep(10000);
 
+    }
+
+    @Test
+    public void saveSettings() {
+        Properties properties = new Properties();
+        properties.setProperty("music", String.valueOf(false));
+        properties.setProperty("soundEffect", String.valueOf(false));
+        properties.setProperty("playerName", "Player1");
+        File file = null;
+        file = new File(SettingsUtils.class.getResource("/settings.properties").getPath());
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            properties.store(fileOutputStream, "Game Settings");
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    @Test
+    public void readSettings() {
+        Properties properties = new Properties();
+
+        File file = null;
+        file = new File(SettingsUtils.class.getResource("/settings.properties").getPath());
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            properties.load(fileInputStream);
+            /**begin*******直接遍历文件key值获取*******begin*/
+            Iterator<String> iterator = properties.stringPropertyNames().iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                System.out.println(key + ":" + properties.getProperty(key));
+            }
+            /**end*******直接遍历文件key值获取*******end*/
+            /**begin*******在知道Key值的情况下，直接getProperty即可获取*******begin*/
+            String user = properties.getProperty("music");
+            String pass = properties.getProperty("playerName");
+            System.out.println("\n" + user + "\n" + pass);
+            /**end*******在知道Key值的情况下，直接getProperty即可获取*******end*/
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+    @Test
+    public void savePlayerRankToFile() {
+        List<Player> players=new ArrayList<>();
+        players.add(new Player("1",100,10));
+        players.add(new Player("2",100,20));
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream("playerList.dat");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(players);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+            System.out.println("Write Success!");
+            FileInputStream fileInputStream = new FileInputStream("playerList.dat");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            try {
+                List<Player> players1= (List<Player>) objectInputStream.readObject();
+                System.out.println(players1);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
