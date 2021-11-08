@@ -1,12 +1,14 @@
 package utils;
 
 import panel.GamePanel;
+import panel.LevelPanel;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class ImageUtils {
+    public static BufferedImage stage;
     public static BufferedImage p1upImage; //向上移动时的图片
     public static BufferedImage p1downImage;//向下移动时的图片
     public static BufferedImage p1rightImage;//向右移动时的图片
@@ -24,6 +26,7 @@ public class ImageUtils {
     public static BufferedImage grass;
     static {
         try {
+            stage=ImageIO.read(LevelPanel.class.getResource("/img/stage.png").openStream());
             p1upImage = ImageIO.read(GamePanel.class.getResource("/img/p1tankU.gif").openStream());
             p1downImage=ImageIO.read((GamePanel.class.getResource("/img/p1tankD.gif").openStream()));
             p1leftImage=ImageIO.read((GamePanel.class.getResource("/img/p1tankL.gif").openStream()));

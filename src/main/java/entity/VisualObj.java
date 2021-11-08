@@ -42,7 +42,6 @@ public abstract class VisualObj implements Serializable {
             this.width = image.getWidth();
             this.height = image.getHeight();
         }catch (IOException e) {
-            // TODO: handle exception
             e.printStackTrace();
         }
     }

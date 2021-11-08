@@ -3,6 +3,7 @@ package entity;
 import lombok.Data;
 import myEnum.Direction;
 import myEnum.Mode;
+import myEnum.ObjType;
 import panel.GamePanel;
 import utils.ImageUtils;
 
@@ -81,6 +82,7 @@ public class Shell extends VisualObj {
                     wall.alive=false;
                     //同时通知Panel GameOver
                 }
+                GameMap.map[wall.getX()/40][wall.getY()/40]= ObjType.air;
                 return true;
             }
         }
@@ -94,8 +96,8 @@ public class Shell extends VisualObj {
                 if(tank.getHP()<=0){
                     tank.setAlive(false);
                     GameMap.tanks.remove(tank.getId());
-                    if(tank.getId()==GamePanel.P1_TAG&&GamePanel.mode== Mode.Single){
-                        GamePanel.ShutDown();
+                    if(tank.getId()==GamePanel.getP1Tag()||tank.getId()==GamePanel.getP2Tag()){
+                        GameMap.reBornPlayer(tank.getId());
                     }
                 }
                 return true;

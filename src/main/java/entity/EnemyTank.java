@@ -2,6 +2,7 @@ package entity;
 
 import myEnum.Direction;
 import myEnum.ObjType;
+import panel.GamePanel;
 import utils.ImageUtils;
 
 import java.awt.*;
@@ -12,17 +13,17 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static panel.GamePanel.*;
-import static panel.GamePanel.P1_TAG;
 import static panel.GamePanel.executorService;
 
 public class EnemyTank extends Tank {
-
+    int count;
     public EnemyTank(int x, int y, Direction direction, int id) {
         super(x, y, direction, id);
 //        executorService.submit(new EnemyTankMove());
 //        executorService.submit(new RandomMoveThread());
         stackFuture = executorService.submit(new TaskWithPath());//这一步很重要！！！
         executorService.submit(new TraceMove());
+        count=0;
         //executorService.submit(new TaskWithPath());
     }
 
@@ -73,7 +74,7 @@ public class EnemyTank extends Tank {
         @Override
         public void run(){
             Direction direction=curDirection;
-            int count = 0;
+
             while (alive) {
                 if (stackFuture.isDone()) {
                     try {
@@ -89,12 +90,12 @@ public class EnemyTank extends Tank {
                         if (null != result && result.size() != 0 && null == next) {
                             next = result.pop();
                         }
-                        if(GameMap.map[next.getX()][next.getY()]!=ObjType.air&&GameMap.map[next.getX()][next.getY()]!=ObjType.surface){
+                        if(next!=null&&GameMap.map[next.getX()][next.getY()]!=ObjType.air&&GameMap.map[next.getX()][next.getY()]!=ObjType.surface){
                             System.out.println("Not able to Move to"+next.getX()+","+next.getY());
                             Thread.sleep(1000);
                             stackFuture = executorService.submit(new TaskWithPath());
                         }
-                    } catch (InterruptedException | ExecutionException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -107,6 +108,9 @@ public class EnemyTank extends Tank {
                         System.out.println(Thread.currentThread().getName() + ":" + coord.toString() + "->" + next.toString());
                     }
                     GetMoveDirection(GetDirection(coord, next));
+                }
+                if(next==null){
+                    GetMoveDirection(RandomMove());
                 }
                 //为了防止两个坦克为了竞争同一个前面的方块而卡住
                 // 这里采用如果在同一个移动方向停滞过久就往反方向移动一格的方法
@@ -128,7 +132,7 @@ public class EnemyTank extends Tank {
                                     n = KeyEvent.VK_LEFT;
                                     break;
                                 default:
-                                    n = KeyEvent.VK_SHIFT;
+                                    n = KeyEvent.VK_NUMPAD0;
                             }
                             try {
                                 for (int j = 0; j < 5; ++j) {
@@ -173,6 +177,26 @@ public class EnemyTank extends Tank {
     }
 
     private int RandomMove() {
+        if(++count<10){
+            int n;
+            switch (curDirection) {
+                case DOWN:
+                    n = KeyEvent.VK_DOWN;
+                    break;
+                case UP:
+                    n = KeyEvent.VK_UP;
+                    break;
+                case RIGHT:
+                    n = KeyEvent.VK_RIGHT;
+                    break;
+                case LEFT:
+                    n = KeyEvent.VK_LEFT;
+                    break;
+                default:
+                    n = KeyEvent.VK_NUMPAD0;
+            };
+            return n;
+        }
         int[] ops = {KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_NUMPAD0};
         Random random = new Random(System.currentTimeMillis());
         return ops[random.nextInt(5)];
@@ -246,6 +270,11 @@ public class EnemyTank extends Tank {
                 setImage(ImageUtils.enemy1rightImage);
                 break;
         }
+        Random random=new Random();
+        //电脑随机射击
+        if(random.nextInt(10)<=5){
+            super.GetMoveDirection(KeyEvent.VK_NUMPAD0);
+        }
     }
 
     //路径获得的线程
@@ -270,7 +299,11 @@ public class EnemyTank extends Tank {
      * @return 移动的路径
      */
     private Stack<Coordinate> GetPath() {
-        Coordinate target = new Coordinate(GameMap.tanks.get(P1_TAG).getX()/width, GameMap.tanks.get(P1_TAG).getY()/height);
+        Stack<Coordinate> Coordinates = new Stack<>();
+        Coordinate target = new Coordinate(GameMap.tanks.get(GamePanel.getP1Tag()).getX()/width, GameMap.tanks.get(GamePanel.getP1Tag()).getY()/height);
+        if(GameMap.map[target.getX()][target.getY()]==ObjType.surface){
+            return Coordinates;
+        }
         Queue<Coordinate> queue = new LinkedBlockingQueue<>();
         HashSet<Coordinate> checkSet=new HashSet<>();
         Coordinate coordinate = new Coordinate(x/width, y/height);
@@ -357,7 +390,7 @@ public class EnemyTank extends Tank {
                 break;
             }
         }
-        Stack<Coordinate> Coordinates = new Stack<>();
+
         while (last!=null&&last.nextPoint!=null) {//避免加入起点，以免无法移动
             Coordinates.push(last);
             last = last.nextPoint;

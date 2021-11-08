@@ -2,6 +2,7 @@ package panel;
 
 
 import myEnum.Mode;
+import utils.ImageUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,14 +41,16 @@ public class LevelPanel extends JPanel {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2=(Graphics2D)g;
-        g2.setColor(Color.BLACK);
+        g2.setColor(Color.GRAY);
         g2.fillRect(0, 0, getWidth(), getHeight());
-        g2.setFont(new Font("黑体", Font.BOLD, 50));
-        g2.setColor(Color.GREEN);
-        g2.drawString(levelStr, 260, 300);
+        g2.setFont(new Font("8bit_like_fontv1.1", Font.BOLD, 50));
+        g2.setColor(Color.BLACK);
+//        g2.drawString(levelStr, 260, 300);
+        g2.drawImage(ImageUtils.stage,300,270,238,34,null);
+        g2.drawString(String.valueOf(level),558,304);
         g2.setColor(Color.RED);
-        g2.drawString(ready, 270, 400);
-        System.out.println("Paint!");
+//        g2.drawString(ready, 270, 400);
+//        System.out.println("Paint!");
 
     }
 
@@ -58,7 +61,7 @@ public class LevelPanel extends JPanel {
         play.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //setVisible(false);
         //play是新的坦克大战窗口;但是那个setVisible的LevelPanel在主函数的Frame里，而这个主函数的Frame没有隐藏
-        gamePanel = new GamePanel(mode,level,play);
+        gamePanel = GamePanel.newGamePanel(mode,level,play);
         play.setSize(900,900);
         //play.setSize(900,900);
         play.setLayout(new BorderLayout());
@@ -102,13 +105,13 @@ public class LevelPanel extends JPanel {
     private class LevelPanelThread implements Runnable {
         @Override
         public void run() {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 4; i++) {
                 if (i % 2 == 0) {
                     levelStr = "Level" + level;
                 } else {
                     levelStr = "";
                 }
-                if (i == 4) {
+                if (i == 3) {
                     ready = "Ready !";
                 }
                 repaint();
