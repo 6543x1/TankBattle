@@ -13,10 +13,7 @@ import java.util.concurrent.Executors;
 
 
 public class StartGame extends JFrame {
-    public static ExecutorService executorService = Executors.newCachedThreadPool();
     private JFrame play;
-    private GamePanel gamePanel = null;
-    private static int PlayTime = 0;
 
     public static void main(String[] args) {
         //使用EventQueue来使方法结束时资源被释放
@@ -52,12 +49,12 @@ public class StartGame extends JFrame {
         lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
         lblNewLabel.setForeground(Color.WHITE);
         lblNewLabel.setIcon(new ImageIcon(StartGame.class.getResource("/img/logo.png")));
-        lblNewLabel.setBounds(150, 10, 320, 200);
+        lblNewLabel.setBounds(190, 10, 320, 200);
         panel.add(lblNewLabel);
 
         JButton btnNewButton = new JButton("");
         //btnNewButton.setBackground(Color.BLACK);
-        btnNewButton.setBounds(224, 243, 150, 35);
+        btnNewButton.setBounds(254, 243, 150, 35);
         btnNewButton.setIcon(new ImageIcon(StartGame.class.getResource("/img/single.png")));
         btnNewButton.addActionListener(e -> play(Mode.Single));
         btnNewButton.setBorderPainted(false);
@@ -65,7 +62,7 @@ public class StartGame extends JFrame {
         panel.add(btnNewButton);
 
         JButton btnNewButton_1 = new JButton("");
-        btnNewButton_1.setBounds(224, 298, 150, 35);
+        btnNewButton_1.setBounds(254, 298, 150, 35);
         btnNewButton_1.setIcon(new ImageIcon(StartGame.class.getResource("/img/double.png")));
         btnNewButton_1.setBorderPainted(false);
         btnNewButton_1.addActionListener(e -> play(Mode.Double));
@@ -73,7 +70,7 @@ public class StartGame extends JFrame {
         panel.add(btnNewButton_1);
 
         JButton jButton=new JButton("");
-        jButton.setBounds(224, 353, 150, 35);
+        jButton.setBounds(254, 353, 150, 35);
         jButton.setIcon(new ImageIcon(StartGame.class.getResource("/img/settings.png")));
         jButton.setBorderPainted(false);
         jButton.addActionListener(e->settings());
@@ -81,7 +78,7 @@ public class StartGame extends JFrame {
         panel.add(jButton);
 
         JButton rankButton=new JButton("");
-        rankButton.setBounds(224, 408, 150, 35);
+        rankButton.setBounds(254, 408, 150, 35);
         rankButton.setIcon(new ImageIcon(StartGame.class.getResource("/img/playerRank.png")));
         rankButton.setBorderPainted(false);
         rankButton.setContentAreaFilled(false);
@@ -92,8 +89,8 @@ public class StartGame extends JFrame {
     }
 
     private void play(Mode mode) {
-        GamePanel.live.getAndSet(true);
-        play = new JFrame("Live" + ":" + PlayTime++ + "s");
+        GamePanel.getLive().getAndSet(true);
+        play = new JFrame("Live" + ":" + 0+ "s");
         play.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(false);
         LevelPanel levelPanel=new LevelPanel(1,play,mode);
@@ -102,19 +99,6 @@ public class StartGame extends JFrame {
         play.setVisible(true);
         play.setResizable(false);
         levelPanel.requestFocus();
-        //可能要由level去启动GamePanel...要不然后面会覆盖前面，而且不能休眠当前线程
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        gamePanel = new GamePanel(mode);
-//        play.setContentPane(gamePanel);
-//        play.setBounds(gamePanel.getBounds());
-//        play.setVisible(true);
-//        play.setResizable(false);
-//        gamePanel.requestFocus();
-//        new Thread(new CheckLive()).start();
     }
     private void settings(){
         play = new JFrame("游戏设置");

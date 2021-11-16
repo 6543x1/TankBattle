@@ -1,4 +1,4 @@
-package entity;
+package entity.Surface;
 
 import utils.ImageUtils;
 
@@ -7,7 +7,7 @@ import java.awt.*;
 public class Grass extends Surface{
     public Grass(int x, int y, int width, int height) {
         super(x, y, width, height);
-        image= ImageUtils.grass;
+        image= ImageUtils.getGrass();
     }
 
     @Override

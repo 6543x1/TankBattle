@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>entity</OriginalElement>
+  <nodes>
+    <node x="1789.5" y="1113.5">entity.Grass</node>
+    <node x="718.0" y="1604.0">entity.GameMap</node>
+    <node x="718.0" y="1044.0">entity.Base</node>
+    <node x="1416.7738095238096" y="545.0">entity.Shell</node>
+    <node x="1378.25" y="1359.0">entity.PlayerBotTank</node>
+    <node x="357.0" y="591.0">entity.Wall</node>
+    <node x="0.0" y="1067.5">entity.BrickWall</node>
+    <node x="793.25" y="1393.5">entity.EnemyHeavyTank</node>
+    <node x="971.0" y="1604.0">entity.Coordinate</node>
+    <node x="936.0" y="1044.5">entity.EnemyTank</node>
+    <node x="1770.0" y="660.5">entity.Surface</node>
+    <node x="1089.25" y="1393.5">entity.EnemyLightTank</node>
+    <node x="1200.0" y="1604.0">entity.Player</node>
+    <node x="1110.7738095238096" y="453.0">entity.Tank</node>
+    <node x="463.0" y="1113.5">entity.HalfBrickWall</node>
+    <node x="232.0" y="1113.5">entity.SteelWall</node>
+    <node x="1388.25" y="998.0">entity.PlayerTank</node>
+    <node x="1246.5" y="0.0">entity.VisualObj</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="entity.Grass" target="entity.Surface" relationship="GENERALIZATION">
+      <point x="0.0" y="-40.0" />
+      <point x="0.0" y="40.0" />
+    </edge>
+    <edge source="entity.Base" target="entity.Wall" relationship="GENERALIZATION">
+      <point x="0.0" y="-109.5" />
+      <point x="817.0" y="973.0" />
+      <point x="459.0" y="973.0" />
+      <point x="0.0" y="109.5" />
+    </edge>
+    <edge source="entity.Shell" target="entity.VisualObj" relationship="GENERALIZATION">
+      <point x="0.0" y="-155.5" />
+      <point x="1528.2738095238096" y="428.0" />
+      <point x="1356.5" y="428.0" />
+      <point x="0.0" y="201.5" />
+    </edge>
+    <edge source="entity.SteelWall" target="entity.Wall" relationship="GENERALIZATION">
+      <point x="0.0" y="-40.0" />
+      <point x="337.5" y="973.0" />
+      <point x="459.0" y="973.0" />
+      <point x="0.0" y="109.5" />
+    </edge>
+    <edge source="entity.EnemyHeavyTank" target="entity.EnemyTank" relationship="GENERALIZATION">
+      <point x="0.0" y="-40.0" />
+      <point x="931.25" y="1334.0" />
+      <point x="1077.5" y="1334.0" />
+      <point x="0.0" y="109.0" />
+    </edge>
+    <edge source="entity.HalfBrickWall" target="entity.Wall" relationship="GENERALIZATION">
+      <point x="0.0" y="-40.0" />
+      <point x="580.5" y="973.0" />
+      <point x="459.0" y="973.0" />
+      <point x="0.0" y="109.5" />
+    </edge>
+    <edge source="entity.PlayerBotTank" target="entity.PlayerTank" relationship="GENERALIZATION">
+      <point x="0.0" y="-74.5" />
+      <point x="0.0" y="155.5" />
+    </edge>
+    <edge source="entity.PlayerTank" target="entity.Tank" relationship="GENERALIZATION">
+      <point x="0.0" y="-155.5" />
+      <point x="1507.25" y="973.0" />
+      <point x="1253.7738095238096" y="973.0" />
+      <point x="0.0" y="247.5" />
+    </edge>
+    <edge source="entity.BrickWall" target="entity.Wall" relationship="GENERALIZATION">
+      <point x="0.0" y="-86.0" />
+      <point x="106.0" y="973.0" />
+      <point x="459.0" y="973.0" />
+      <point x="0.0" y="109.5" />
+    </edge>
+    <edge source="entity.Wall" target="entity.VisualObj" relationship="GENERALIZATION">
+      <point x="0.0" y="-109.5" />
+      <point x="459.0" y="428.0" />
+      <point x="1356.5" y="428.0" />
+      <point x="0.0" y="201.5" />
+    </edge>
+    <edge source="entity.Surface" target="entity.VisualObj" relationship="GENERALIZATION">
+      <point x="0.0" y="-40.0" />
+      <point x="1880.0" y="428.0" />
+      <point x="1356.5" y="428.0" />
+      <point x="0.0" y="201.5" />
+    </edge>
+    <edge source="entity.EnemyLightTank" target="entity.EnemyTank" relationship="GENERALIZATION">
+      <point x="0.0" y="-40.0" />
+      <point x="1223.75" y="1334.0" />
+      <point x="1077.5" y="1334.0" />
+      <point x="0.0" y="109.0" />
+    </edge>
+    <edge source="entity.EnemyTank" target="entity.Tank" relationship="GENERALIZATION">
+      <point x="0.0" y="-109.0" />
+      <point x="1077.5" y="973.0" />
+      <point x="1253.7738095238096" y="973.0" />
+      <point x="0.0" y="247.5" />
+    </edge>
+    <edge source="entity.Tank" target="entity.VisualObj" relationship="GENERALIZATION">
+      <point x="0.0" y="-247.5" />
+      <point x="1253.7738095238096" y="428.0" />
+      <point x="1356.5" y="428.0" />
+      <point x="0.0" y="201.5" />
+    </edge>
+  </edges>
+  <settings layout="分层" zoom="0.6322084739407569" showDependencies="false" x="1222.0705770713491" y="1235.7182254907782" />
+  <SelectedNodes>
+    <node>entity.GameMap</node>
+    <node>entity.Coordinate</node>
+    <node>entity.Player</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>内部类</Category>
+    <Category>属性</Category>
+    <Category>方法</Category>
+    <Category>构造函数</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

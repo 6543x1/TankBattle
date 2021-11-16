@@ -1,28 +1,22 @@
-package entity;
+package entity.Tank;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import entity.*;
+import entity.Map.GameMap;
+import entity.Shell.Shell;
+import entity.Wall.Wall;
 import myEnum.Direction;
-import myEnum.ObjType;
 import panel.GamePanel;
-import utils.ImageUtils;
 
 import java.awt.event.KeyEvent;
 import java.util.Stack;
 import java.util.concurrent.Future;
 
-import static entity.GameMap.map;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
-@NoArgsConstructor
 public abstract class Tank extends VisualObj {
 
     protected int HP;//Hit Points 血量
     protected int fullHp;//总血量
     protected int speed;//移速
-    Direction nextDirection;//下一步移动方向（根据接收到的key来判断）
     Direction curDirection;//当前方向
     //下一个位移的坐标
     protected volatile Coordinate next;
@@ -31,30 +25,81 @@ public abstract class Tank extends VisualObj {
 
     protected int id;
     protected int key;
+    protected String name;
 
+    public int getHP() {
+        return HP;
+    }
+
+    public void setHP(int HP) {
+        this.HP = HP;
+    }
+
+    public int getFullHp() {
+        return fullHp;
+    }
+
+    public void setFullHp(int fullHp) {
+        this.fullHp = fullHp;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public Direction getCurDirection() {
+        return curDirection;
+    }
+
+    public void setCurDirection(Direction curDirection) {
+        this.curDirection = curDirection;
+    }
+
+    public Coordinate getNext() {
+        return next;
+    }
+
+    public void setNext(Coordinate next) {
+        this.next = next;
+    }
+
+    public Future<Stack<Coordinate>> getStackFuture() {
+        return stackFuture;
+    }
+
+    public void setStackFuture(Future<Stack<Coordinate>> stackFuture) {
+        this.stackFuture = stackFuture;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getKey() {
+        return key;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
+    }
 
     public Tank(int x, int y, Direction direction, int id) {
         super(x, y, 40, 40);
         this.fullHp = 40;
-        this.HP = 40;
+        this.HP = 20;
         this.curDirection = direction;
         this.id = id;
-//        if (id < Game.PLAY_1) {
-//            stackFuture = executorService.submit(new TaskWithPath());
-//            executorService.submit(new ETankMove());
-//        } else {
-
-//        }
-        //executorService.submit(new TankMpRecover());
+        this.name=getName();
     }
 
-    public Tank(int x, int y, int width, int height) {
-        super(x, y, width, height);
-    }
-
-    public Tank(int x, int y, String url) {
-        super(x, y, url);
-    }
 
     public void GetMoveDirection(int n) {
         int t_x = x/width;
@@ -69,7 +114,7 @@ public abstract class Tank extends VisualObj {
 
                 if (!(curDirection == Direction.UP)) {
                     curDirection = Direction.UP;
-                    setImage(ImageUtils.p1upImage);
+//                    setImage(ImageUtils.p1upImage);
                     //nextDirection = Direction.UP;
                 } else {
                     y -= speed;
@@ -88,7 +133,7 @@ public abstract class Tank extends VisualObj {
 
                 if (!(curDirection == Direction.DOWN)) {
                     curDirection = Direction.DOWN;
-                    setImage(ImageUtils.p1downImage);
+//                    setImage(ImageUtils.p1downImage);
                 } else {
                     y += speed;//已经转向当前方向，向上移动（注意是第四象限）
                     if(!CheckAndCorrectPosition()){
@@ -101,7 +146,7 @@ public abstract class Tank extends VisualObj {
                 //先判断坦克的方向，方向相同则判断是否可以移动
                 if (!(curDirection == Direction.LEFT)) {
                     curDirection = Direction.LEFT;
-                    setImage(ImageUtils.p1leftImage);
+//                    setImage(ImageUtils.p1leftImage);
                 } else {
                     x -= speed;//已经转向当前方向，向上移动（注意是第四象限）
                     if(!CheckAndCorrectPosition()){
@@ -115,7 +160,7 @@ public abstract class Tank extends VisualObj {
 
                 if (!(curDirection == Direction.RIGHT)) {
                     curDirection = Direction.RIGHT;
-                    setImage(ImageUtils.p1rightImage);
+//                    setImage(ImageUtils.p1rightImage);
                 } else {
                     x += speed;//已经转向当前方向，向上移动（注意是第四象限）
                     if(!CheckAndCorrectPosition()){
@@ -127,23 +172,19 @@ public abstract class Tank extends VisualObj {
             case KeyEvent.VK_NUMPAD0: {
                 //子弹射出
                 //先判断是否有子弹正在途中
-//                if (mp > 0) {
-//                    synchronized ("KEY") {
-//                        mp -= 10;
-//                    }
                 //设置子弹的坐标
                 //纵横轴坐标需要结合坦克和子弹的图像大小决定
-                if(GameMap.shells.get(id)!=null){
-                    System.out.println("当前仍有子弹在飞行！射击失败");
+                if(GameMap.getShells().get(id)!=null){
+//                    System.out.println("当前仍有子弹在飞行！射击失败");
                     key=-1;
                     return;
                 }
-                System.out.println("向"+curDirection+"射击");
+//                System.out.println("向"+curDirection+"射击");
                 int shellX=x;
                 int shellY=y;
                 switch (curDirection){
                     case UP:
-                        shellX+=(width-Shell.width)/2;
+                        shellX+=(width- Shell.width)/2;
                         shellY-=Shell.height;
                         break;
                     case DOWN:
@@ -160,7 +201,7 @@ public abstract class Tank extends VisualObj {
                         break;
                 }
                 try {
-                    GameMap.shells.put(getId(),new Shell(shellX,shellY,curDirection,getId(),10));
+                    GameMap.getShells().put(getId(),new Shell(shellX,shellY,curDirection,getId(),10));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -168,6 +209,7 @@ public abstract class Tank extends VisualObj {
                 // break;
             }
         }
+        changeDirectionImage();
         //发生了一整格的变化
         if (t_y != y/height || t_x != x/width) {
             //x、y本来就是*40后放入tank的
@@ -176,20 +218,7 @@ public abstract class Tank extends VisualObj {
             //我并没有存储坦克的地图坐标。。。大意了，这样不好寻路？
             //因为移动之后要把原来的点给变成空气
             if (((t_y2 != t_y) || (t_x2 != t_x)) && (x % width == 0 || y % height == 0)) {
-                //20%40!=0 !!!!!
-//                synchronized (map) {
-//                    map[t_y2][t_x2] = map[t_y][t_x];
-//                    map[t_y][t_x] = ObjType.air;
-//                }//运行到此处出现问题，死锁了？
-                //map[t_y2][t_x2] = map[t_y][t_x];//此处会导致移动到边界时异常,不是会回滚位置吗？
-                //map[t_y][t_x] = ObjType.air;不要这么做，因为会导致寻路系统异常
-                // coord.x = t_x;
-                // coord.y = t_y;
-//                if (id == Game.PLAY_1) Game.printMap();
 
-//                if (!executorService.isShutdown()&&this.id!=GamePanel.P1_TAG) {
-//                    stackFuture = executorService.submit(new EnemyTank.TaskWithPath());
-//                }
                 next = null;//很重要！
 
 
@@ -202,13 +231,13 @@ public abstract class Tank extends VisualObj {
         //此方法用于纠正位置，比如超出边界、和不可越过物体重叠等问题
         //先根据direction往对应xy加数据 然后判断是否碰撞，最后恢复现场
 //        //检测是否碰撞到墙体
-        for (Wall wall : GameMap.walls.values()) {
+        for (Wall wall : GameMap.getWalls().values()) {
             if (wall.isCollided(this)) {
                 return false;
             }
         }
         //检测坦克
-        for (Tank tank : GameMap.tanks.values()) {
+        for (Tank tank : GameMap.getTanks().values()) {
             if (tank.isCollided(this) && !this.equals(tank)) {
                 //如果是玩家就攻击
                 return false;
@@ -231,6 +260,8 @@ public abstract class Tank extends VisualObj {
         }
         return true;
     }
+    protected  abstract void changeDirectionImage();
+    protected abstract String getName();
 
 
 }

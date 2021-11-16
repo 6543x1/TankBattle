@@ -1,4 +1,8 @@
 import entity.*;
+import entity.Map.GameMap;
+import entity.Wall.Base;
+import entity.Wall.BrickWall;
+import entity.Wall.Wall;
 import myEnum.Direction;
 import myEnum.ObjType;
 import org.junit.Test;
@@ -6,8 +10,6 @@ import utils.SettingsUtils;
 
 import javax.sound.sampled.*;
 import java.io.*;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -393,15 +395,15 @@ public class MyTest {
         BrickWall brickWall = new BrickWall(coord.hashCode(), coord.getX() * 40, coord.getY() * 40, 40, 40);
 
 //        GameMap.map[coord.getY()][coord.getX()] =ObjType.hitWall;
-        GameMap.walls.put(brickWall.getId(), brickWall);
+        GameMap.getWalls().put(brickWall.getId(), brickWall);
         coord.setX(430);
         coord.setY(560);
         Base base = new Base(6, coord.getX(), coord.getY(), 55, 40);
-        GameMap.walls.put(6, base);//这样让基地的血量可以被打印出来
+        GameMap.getWalls().put(6, base);//这样让基地的血量可以被打印出来
         try {
             FileOutputStream fileOutputStream = new FileOutputStream("my.dat");
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(GameMap.walls);
+            objectOutputStream.writeObject(GameMap.getWalls());
             objectOutputStream.flush();
             objectOutputStream.close();
             System.out.println("Write Success!");
@@ -529,12 +531,14 @@ public class MyTest {
 
 
     }
+
     @Test
     public void savePlayerRankToFile() {
-        List<Player> players=new ArrayList<>();
-        players.add(new Player("1",100,10));
-        players.add(new Player("2",100,20));
+        List<Player> players = new ArrayList<>();
+        players.add(new Player("1", 100, 10));
+        players.add(new Player("2", 100, 20));
         try {
+
             FileOutputStream fileOutputStream = new FileOutputStream("playerList.dat");
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(players);
@@ -544,7 +548,7 @@ public class MyTest {
             FileInputStream fileInputStream = new FileInputStream("playerList.dat");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             try {
-                List<Player> players1= (List<Player>) objectInputStream.readObject();
+                List<Player> players1 = (List<Player>) objectInputStream.readObject();
                 System.out.println(players1);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -555,6 +559,27 @@ public class MyTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void PlayerListSort() {
+        List<Player> playerList = new ArrayList<>();
+        Player player = new Player("Hello", 50, 10);
+        playerList.add(player);
+        player = new Player("World", 60, 11);
+        playerList.add(player);
+        player = new Player("Job", 60, 10);
+        playerList.add(player);
+        playerList.sort(Comparator.comparing(Player::getLevel).reversed().thenComparing(Player::getTimes));
+        System.out.println(playerList);
+
+    }
+    @Test
+    public void testString(){
+        String string=String.format("%-20s 名字是","Hello");
+        String str2=String.format("%-20s 名字是","一个普通玩家");
+        System.out.println(string);
+        System.out.println(str2);
     }
 
 

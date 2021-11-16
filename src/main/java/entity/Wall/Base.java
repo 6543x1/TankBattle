@@ -1,6 +1,5 @@
-package entity;
+package entity.Wall;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,11 +10,11 @@ import java.awt.*;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Data
-public class Base extends Wall{
+public class Base extends Wall {
     protected int fullHp;
     public Base(int id,int x,int y,int width,int height){
         super(80,id, x, y, width, height);
-        image= ImageUtils.base;
+        image= ImageUtils.getBase();
         fullHp=80;
     }
     @Override

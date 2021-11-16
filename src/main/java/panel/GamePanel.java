@@ -1,7 +1,15 @@
 package panel;
 
 import entity.*;
+import entity.Map.GameMap;
+import entity.Shell.Shell;
+import entity.Surface.Surface;
+import entity.Tank.PlayerTank;
+import entity.Tank.Tank;
+import entity.Wall.Wall;
 import myEnum.Mode;
+import utils.RankUtils;
+import utils.SettingsUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +20,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GamePanel extends JPanel {
-    public static ExecutorService executorService = Executors.newCachedThreadPool();
+    private static ExecutorService executorService = Executors.newCachedThreadPool();
     private Image OffScreenImage;
     private JFrame play;
     //坦克的移动区域
@@ -22,8 +30,8 @@ public class GamePanel extends JPanel {
     private static int P1_TAG;
     private static int P2_TAG;
 
-    public static Mode mode;
-    public static AtomicBoolean live = new AtomicBoolean(false);//游戏面板是否存活
+    private static Mode mode;
+    private static AtomicBoolean live = new AtomicBoolean(false);//游戏面板是否存活
 
     public static GamePanel getGamePanel() {
         return gamePanel;
@@ -59,6 +67,7 @@ public class GamePanel extends JPanel {
             gamePanel=new GamePanel(mode,level,play);
         }
         return gamePanel;
+
     }
     private GamePanel(Mode mode, int level, JFrame play) {
         this.level = level;
@@ -73,11 +82,27 @@ public class GamePanel extends JPanel {
         GameMap.initMap();
         GameMap.initWall();
         GameMap.initSurface();
-        GameMap.initTank(mode);
+        GameMap.initTank(mode,level);
         addKeyListener(new KeyBoardListener());
         //executorService.submit(new MissileMove());
         executorService.submit(new Draw());
     }
+
+    public static ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+
+
+    public static Mode getMode() {
+        return mode;
+    }
+
+
+    public static AtomicBoolean getLive() {
+        return live;
+    }
+
 
 
     /**
@@ -88,23 +113,20 @@ public class GamePanel extends JPanel {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
         //绘制坦克
-        for (Tank tank : GameMap.tanks.values()) {
+        for (Tank tank : GameMap.getTanks().values()) {
             tank.draw(g2);
         }
         //绘画墙体
-        for (Wall wall : GameMap.walls.values()) {
+        for (Wall wall : GameMap.getWalls().values()) {
             wall.draw(g2);
         }
 
-        for(Surface surface:GameMap.surfaces.values()){
+        for(Surface surface: GameMap.getSurfaces().values()){
             surface.draw(g2);
         }
 
-
-
-
-        //子弹绘画
-        for (Shell shell : GameMap.shells.values()) {
+        //打印子弹
+        for (Shell shell : GameMap.getShells().values()) {
             shell.draw(g2);
         }
 
@@ -118,13 +140,13 @@ public class GamePanel extends JPanel {
         if (OffScreenImage == null) {
             OffScreenImage = this.createImage(screenWidth, screenHeight);
         }
-        Graphics goffscrenn = OffScreenImage.getGraphics();    //设置一个内存画笔颜色为前景图片颜色
-        Color c = goffscrenn.getColor();    //还是先保存前景颜色
-        goffscrenn.setColor(Color.BLACK);    //设置内存画笔颜色为绿色
-        goffscrenn.fillRect(0, 0, screenWidth, screenHeight);    //画成图片，大小为游戏大小
-        goffscrenn.setColor(c);    //还原颜色
+        Graphics offscreen = OffScreenImage.getGraphics();    //设置一个内存画笔颜色为前景图片颜色
+        Color c = offscreen.getColor();    //还是先保存前景颜色
+        offscreen.setColor(Color.BLACK);    //设置内存画笔颜色为绿色
+        offscreen.fillRect(0, 0, screenWidth, screenHeight);    //画成图片，大小为游戏大小
+        offscreen.setColor(c);    //还原颜色
         g.drawImage(OffScreenImage, 0, 0, null);    //在界面画出保存的图片
-        paint(goffscrenn);    //把内存画笔调用给paint
+        paint(offscreen);    //把内存画笔调用给paint
     }
 
     /**
@@ -154,40 +176,19 @@ public class GamePanel extends JPanel {
         public void keyPressed(KeyEvent e) {
             super.keyPressed(e);
             int key = e.getKeyCode();
-            //区分两种不同的按键
-            //ASDWG为P2的按键
-            //上下左右+小键盘0为P1按键
-            if (key == KeyEvent.VK_N) {
-                nextLevel();
-            }
+
+            //上下左右+小键盘0/空格为P1按键
+//            if (key == KeyEvent.VK_N) {
+//                nextLevel();//测试用，跳关卡
+//            }
             if (key < 65) {
-                if (key != KeyEvent.VK_SHIFT && GameMap.tanks.get(P1_TAG) != null) {
-                    PlayerTank p1 = (PlayerTank) GameMap.tanks.get(P1_TAG);
+                if (GameMap.getTanks().get(P1_TAG) != null) {
+                    PlayerTank p1 = (PlayerTank) GameMap.getTanks().get(P1_TAG);
                     p1.setKey(key);
                     p1.setMove(true);
                 }
                 if (key == KeyEvent.VK_ESCAPE) {
                     ShutDown();
-                }
-            } else {
-                if (key != KeyEvent.VK_G && GameMap.tanks.get(P2_TAG) != null) {
-                    switch (key) {
-                        case KeyEvent.VK_W:
-                            key = KeyEvent.VK_UP;
-                            break;
-                        case KeyEvent.VK_A:
-                            key = KeyEvent.VK_LEFT;
-                            break;
-                        case KeyEvent.VK_S:
-                            key = KeyEvent.VK_DOWN;
-                            break;
-                        case KeyEvent.VK_D:
-                            key = KeyEvent.VK_RIGHT;
-                            break;
-                    }
-                    PlayerTank p2 = (PlayerTank) GameMap.tanks.get(P2_TAG);
-                    p2.setKey(key);
-                    p2.setMove(true);
                 }
             }
         }
@@ -196,44 +197,26 @@ public class GamePanel extends JPanel {
         public void keyReleased(KeyEvent e) {
             super.keyReleased(e);
             int key = e.getKeyCode();
-            if (key < 65) {
-                checkNextMove(key, GameMap.tanks.get(P1_TAG), null, P1_TAG);
-            } else if (key == KeyEvent.VK_NUMPAD0) {
-                PlayerTank p1 = (PlayerTank) GameMap.tanks.get(P1_TAG);
-                if (GameMap.shells.get(P1_TAG) != null) {
+            if (key < 65&&key!=KeyEvent.VK_SPACE) {
+                checkNextMove(key, GameMap.getTanks().get(P1_TAG), null, P1_TAG);
+            } else if (key == KeyEvent.VK_NUMPAD0||key==KeyEvent.VK_SPACE) {
+                PlayerTank p1 = (PlayerTank) GameMap.getTanks().get(P1_TAG);
+                if (GameMap.getShells().get(P1_TAG) != null) {
                     System.out.println("当前仍有子弹在飞行！射击失败");
                     return;
                 }
-                p1.GetMoveDirection(key);
-            } else {
-                switch (key) {
-                    case KeyEvent.VK_W:
-                        key = KeyEvent.VK_UP;
-                        break;
-                    case KeyEvent.VK_A:
-                        key = KeyEvent.VK_LEFT;
-                        break;
-                    case KeyEvent.VK_S:
-                        key = KeyEvent.VK_DOWN;
-                        break;
-                    case KeyEvent.VK_D:
-                        key = KeyEvent.VK_RIGHT;
-                        break;
-                    case KeyEvent.VK_G:
-                        key = KeyEvent.VK_SHIFT;
-                        break;
-                }
-                checkNextMove(key, null, GameMap.tanks.get(P2_TAG), P2_TAG);
+                p1.GetMoveDirection(KeyEvent.VK_NUMPAD0);//空格转化为NUMPAD0
             }
-        }
+            }
+
 
         private void checkNextMove(int key, Tank tank, Tank o, int p1Tag) {
             if (tank != o) {
-                if (key != KeyEvent.VK_SHIFT && key == GameMap.tanks.get(p1Tag).getKey()) {
-                    PlayerTank p1 = (PlayerTank) GameMap.tanks.get(p1Tag);
+                if (key != KeyEvent.VK_NUMPAD0 && key == GameMap.getTanks().get(p1Tag).getKey()) {
+                    PlayerTank p1 = (PlayerTank) GameMap.getTanks().get(p1Tag);
                     p1.setMove(false);//若true则连续移动
                 } else {
-                    PlayerTank p1 = (PlayerTank) GameMap.tanks.get(p1Tag);
+                    PlayerTank p1 = (PlayerTank) GameMap.getTanks().get(p1Tag);
                     p1.GetMoveDirection(key);
 
                 }
@@ -244,33 +227,61 @@ public class GamePanel extends JPanel {
     public static void ShutDown() {
         GamePanel.live.getAndSet(false);
         //停止所有的线程
-        for (Tank tank : GameMap.tanks.values()) {
+        for (Tank tank : GameMap.getTanks().values()) {
             tank.setAlive(false);
         }
         executorService.shutdown();
         executorService = Executors.newCachedThreadPool();
-        GameMap.tanks.clear();
-        GameMap.walls.clear();
-        GameMap.shells.clear();
-        gamePanel=null;
+        GameMap.getTanks().clear();
+        GameMap.getWalls().clear();
+        GameMap.getShells().clear();
+        //gamePanel=null;
     }
     public static void reStart() {
         GamePanel.live.getAndSet(false);
         //停止所有的线程
-        for (Tank tank : GameMap.tanks.values()) {
+        for (Tank tank : GameMap.getTanks().values()) {
             tank.setAlive(false);
         }
         executorService.shutdown();
         executorService = Executors.newCachedThreadPool();
-        GameMap.tanks.clear();
-        GameMap.walls.clear();
-        GameMap.shells.clear();
+        GameMap.getTanks().clear();
+        GameMap.getWalls().clear();
+        GameMap.getShells().clear();
         GamePanel backup=gamePanel;
         gamePanel=null;
         backup.thisLevel();
 
     }
+    public static void win(){
+        //ShutDown();
+        GamePanel.live.getAndSet(false);
+        GameMap.getWalls().clear();
+        String p1Name= SettingsUtils.readGameSettings().getPlayerName();
+        Player player=new Player(p1Name,LevelPanel.getPlayTime(), gamePanel.level);
+        gamePanel.showResult(player,null);
+        try {
+            RankUtils.saveToPlayerList(player);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+    }
+
+    public static void goNextLevel(){
+        System.out.println("Go Next Level");
+        gamePanel.nextLevel();
+    }
+    private void showResult(Player p1,Player p2){
+        ResultPanel resultPanel=new ResultPanel(p1,p2);
+        setVisible(false);
+        play.setLayout(null);
+        play.setContentPane(resultPanel);
+        play.setBounds(resultPanel.getBounds());
+        play.setVisible(true);
+        resultPanel.requestFocus();
+
+    }
     private void nextLevel() {
         gamePanel=null;
         level++;
@@ -286,7 +297,6 @@ public class GamePanel extends JPanel {
 
     private void thisLevel() {
         play.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //setVisible(false);
         LevelPanel levelPanel = new LevelPanel(level, play, mode);
         play.setBounds(levelPanel.getBounds());
         play.setContentPane(levelPanel);

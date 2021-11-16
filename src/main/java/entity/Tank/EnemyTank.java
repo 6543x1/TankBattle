@@ -1,156 +1,123 @@
-package entity;
+package entity.Tank;
 
+import entity.Coordinate;
+import entity.Map.GameMap;
+import myEnum.Difficulty;
 import myEnum.Direction;
 import myEnum.ObjType;
 import panel.GamePanel;
 import utils.ImageUtils;
+import utils.SettingsUtils;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static panel.GamePanel.*;
-import static panel.GamePanel.executorService;
 
 public class EnemyTank extends Tank {
-    int count;
+    private int count;
+    private Coordinate target;
+    private int shotCD;
     public EnemyTank(int x, int y, Direction direction, int id) {
         super(x, y, direction, id);
-//        executorService.submit(new EnemyTankMove());
-//        executorService.submit(new RandomMoveThread());
-        stackFuture = executorService.submit(new TaskWithPath());//这一步很重要！！！
-        executorService.submit(new TraceMove());
+
         count=0;
-        //executorService.submit(new TaskWithPath());
+        if(SettingsUtils.readGameSettings().getDifficulty()== Difficulty.easy){
+            shotCD=1000;
+             target= new Coordinate(GameMap.getTanks().get(GamePanel.getP1Tag()).getX()/width, GameMap.getTanks().get(GamePanel.getP1Tag()).getY()/height);
+        }
+        else if(SettingsUtils.readGameSettings().getDifficulty()==Difficulty.normal){
+            shotCD=800;
+            target = new Coordinate(GameMap.getBaseX()/width, GameMap.getBaseY()/height);
+        }
+        else{
+            shotCD=400;
+            target = new Coordinate(GameMap.getBaseX()/width, GameMap.getBaseY()/height);
+        }
+        stackFuture = getExecutorService().submit(new TaskWithPath());//这一步很重要！！！
+        getExecutorService().submit(new TraceMove());
+        getExecutorService().submit(new RandomShoot());
     }
-
-
-    class EnemyTankMove implements Runnable {
+    class RandomShoot implements Runnable{
         @Override
-        public void run() {
-            //int[] ops={KeyEvent.VK_UP,KeyEvent.VK_DOWN,KeyEvent.VK_LEFT,Ke.yEvent.VK_RIGHT,KeyEvent.VK_NUMPAD0};
-            while (alive) {
-                Coordinate coordinate = new Coordinate(x / 40, y / 40);
-                //System.out.println("Enemy Direction:"+GetDirection(coordinate,next));
-                // GetMoveDirection(GetDirection(coordinate,next));
-                GetMoveDirection(key);
+        public void run(){
+            Random random=new Random(System.currentTimeMillis());
+            while(alive){
+                if(random.nextInt(100)<20){
+                    GetMoveDirection(KeyEvent.VK_NUMPAD0);
+                }
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(shotCD);
                 } catch (InterruptedException e) {
-                    System.out.println(Thread.currentThread().getName() + ":休眠中断");
+                    e.printStackTrace();
                 }
             }
         }
-    }
-
-    class RandomMoveThread implements Runnable {
-        @Override
-        public void run() {
-            while (alive) {
-                key = RandomMove();
-                System.out.println("Enemy go: " + key);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    System.out.println(Thread.currentThread().getName() + ":休眠中断");
-                }
-            }
-        }
-
-    }
-    private Coordinate randomCoord() {
-        Random random = new Random(System.currentTimeMillis());
-        int x, y;
-        do {
-            y = random.nextInt(GameMap.map.length);
-            x = random.nextInt(GameMap.map[0].length);
-        } while (GameMap.map[y][x]!= ObjType.air);
-        return new Coordinate(x, y);
     }
     class TraceMove implements Runnable{
         @Override
         public void run(){
-            Direction direction=curDirection;
-
+            //还有一种解决办法：如果移动的距离没有超过一个身位，就保持当前方向
             while (alive) {
+                Coordinate coordinate=new Coordinate(getX(),getY());
+                Direction direction=curDirection;
                 if (stackFuture.isDone()) {
                     try {
                         //使用栈存放广度遍历算法得到的移动的路径
                         Stack<Coordinate> result = stackFuture.get();
-                        System.out.println("Path="+result);
-                        System.out.println("Tank coordinate:"+x/40+","+y/40);
-                        if(next!=null){
-                        System.out.println(next);
-                        System.out.println(GameMap.map[next.getX()][next.getY()]);
-                        }
-                        //获得下一个路径
                         if (null != result && result.size() != 0 && null == next) {
                             next = result.pop();
                         }
-                        if(next!=null&&GameMap.map[next.getX()][next.getY()]!=ObjType.air&&GameMap.map[next.getX()][next.getY()]!=ObjType.surface){
+                        if(next!=null&& GameMap.getMap()[next.getX()][next.getY()]!=ObjType.air&& GameMap.getMap()[next.getX()][next.getY()]!=ObjType.surface){
                             System.out.println("Not able to Move to"+next.getX()+","+next.getY());
                             Thread.sleep(1000);
-                            stackFuture = executorService.submit(new TaskWithPath());
+                            stackFuture = getExecutorService().submit(new TaskWithPath());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-               // 很可能是广度遍历算法出事了
-                //next=randomCoord();
-                //TankMove();
                 Coordinate coord=new Coordinate(x/40,y/40);
                 if (null != next && !next.equals(coord)) {
                     if (Math.abs(coord.getX() - next.getX()) > 1 || Math.abs(coord.getY() - next.getY()) > 1) {
                         System.out.println(Thread.currentThread().getName() + ":" + coord.toString() + "->" + next.toString());
                     }
-                    GetMoveDirection(GetDirection(coord, next));
+                    if(x%40!=0||y%40!=0){
+                        int n;
+                        switch (direction) {
+                            case UP:
+                                n = KeyEvent.VK_UP;
+                                break;
+                            case DOWN:
+                                n = KeyEvent.VK_DOWN;
+                                break;
+                            case LEFT:
+                                n = KeyEvent.VK_LEFT;
+                                break;
+                            case RIGHT:
+                                n = KeyEvent.VK_RIGHT;
+                                break;
+                            default:
+                                n = KeyEvent.VK_NUMPAD0;
+                        }
+                        GetMoveDirection(n);
+                    }
+                    else {
+                        GetMoveDirection(GetDirection(coord, next));
+                    }
                 }
-                if(next==null){
+                if(next==null||next.equals(coord)){
                     GetMoveDirection(RandomMove());
                 }
-                //为了防止两个坦克为了竞争同一个前面的方块而卡住
-                // 这里采用如果在同一个移动方向停滞过久就往反方向移动一格的方法
-                if (direction == curDirection) {
-                    if (++count > 30) {
-                        if (!CheckAndCorrectPosition()) {
-                            int n;
-                            switch (direction) {
-                                case UP:
-                                    n = KeyEvent.VK_DOWN;
-                                    break;
-                                case DOWN:
-                                    n = KeyEvent.VK_UP;
-                                    break;
-                                case LEFT:
-                                    n = KeyEvent.VK_RIGHT;
-                                    break;
-                                case RIGHT:
-                                    n = KeyEvent.VK_LEFT;
-                                    break;
-                                default:
-                                    n = KeyEvent.VK_NUMPAD0;
-                            }
-                            try {
-                                for (int j = 0; j < 5; ++j) {
-                                    GetMoveDirection(n);
-                                    Thread.sleep(200);
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        count = 0;
-                    }
-                } else {
-                    direction = curDirection;
-                    count = 0;
+                if(new Coordinate(getX(),getY()).equals(coordinate)){
+//                    System.out.println("触发机制");
+                    GetMoveDirection(RandomMove());
                 }
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(300);
                 } catch (InterruptedException e) {
                     System.out.println(Thread.currentThread().getName() + ":休眠中断");
                 }
@@ -177,7 +144,7 @@ public class EnemyTank extends Tank {
     }
 
     private int RandomMove() {
-        if(++count<10){
+        if(++count<20){
             int n;
             switch (curDirection) {
                 case DOWN:
@@ -199,35 +166,66 @@ public class EnemyTank extends Tank {
         }
         int[] ops = {KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_NUMPAD0};
         Random random = new Random(System.currentTimeMillis());
-        return ops[random.nextInt(5)];
+        return ops[random.nextInt(4)];
     }
+
 
     @Override
     public void draw(Graphics2D g2) {
-        //血条和蓝条的高度
-        //这个paintTank方法也应该写到坦克类中
         int h = 5;
         g2.drawImage(getImage(), getX(), getY(), width, height, null);
 
         g2.setColor(Color.RED);
         //玩家血条设置为绿色
         //打印血条
-        if (y >= height) {
-            g2.draw3DRect(getX(), getY() - 10, getFullHp(), h, true);
-            g2.fill3DRect(getX(), getY() - 10, getHP(), h, true);
-        } else {
-            g2.draw3DRect(getX(), getY() + 40, getFullHp(), h, true);
-            g2.fill3DRect(getX(), getY() + 40, getHP(), h, true);
-        }
+//        if (y >= height) {
+//            g2.draw3DRect(getX(), getY() - 10, getFullHp(), h, true);
+//            g2.fill3DRect(getX(), getY() - 10, getHP(), h, true);
+//        } else {
+//            g2.draw3DRect(getX(), getY() + 40, getFullHp(), h, true);
+//            g2.fill3DRect(getX(), getY() + 40, getHP(), h, true);
+//        }
         g2.setColor(Color.WHITE);
-        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() + 1 + h + 55);
-        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() - 55);
+        g2.drawString(name,getX(),getY()-10);
+//        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() + 1 + h + 55);
+//        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() - 55);
+    }
+
+    @Override
+    protected String getName() {
+            StringBuilder val = new StringBuilder();
+            Random random = new Random();
+            for (int i = 0; i < 6; i++) {
+                // 输出字母还是数字
+                String charOrNum = random.nextInt(2) % 2 == 0 ? "char" : "num";
+                // 字符串
+                if ("char".equalsIgnoreCase(charOrNum)) {
+                    // 取得大写字母还是小写字母
+                    //int choice = random.nextInt(2) % 2 == 0 ? 65 : 97;
+                    int choice = 65;//默认用大写了，六位重复率应该比较低吧
+                    val.append((char) (choice + random.nextInt(26)));
+                } else { // 数字
+                    val.append(String.valueOf(random.nextInt(10)));
+                }
+            }
+            return val.toString();
     }
 
     @Override
     public void GetMoveDirection(int n) {
         int t_x = x/width;
         int t_y = y/height;
+        Random random=new Random();
+        //电脑随机射击
+        if(random.nextInt(10)<=2){
+            super.GetMoveDirection(KeyEvent.VK_NUMPAD0);
+            try {
+                Thread.sleep(50);//避免自己射击自己
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
         super.GetMoveDirection(n);
         // 如果坐标发生了一整格的变化，就更新二维数组->方便寻路系统
         if (t_y != y/height || t_x != x/width) {
@@ -237,45 +235,35 @@ public class EnemyTank extends Tank {
             //我并没有存储坦克的地图坐标。。。大意了，这样不好寻路？
             //因为移动之后要把原来的点给变成空气
             if (((t_y2 != t_y) || (t_x2 != t_x)) && (x % height == 0 || y % width == 0)) {
-                //20%40!=0 !!!!!
-//                synchronized (map) {
-//                    map[t_y2][t_x2] = map[t_y][t_x];
-//                    map[t_y][t_x] = ObjType.air;
-//                }//运行到此处出现问题，死锁了？
-                //GameMap.map[t_y2][t_x2] = GameMap.map[t_y][t_x]; 这句话很可能导致异常
-                //GameMap.map[t_y][t_x] = ObjType.air;//非常有可能是这句话导致地图异常
-                // coord.getX() = t_x;
-                // coord.getY() = t_y;
-//                if (id == Game.PLAY_1) Game.printMap();
-
-                if (!executorService.isShutdown()) {
-                    stackFuture = executorService.submit(new TaskWithPath());
+                if (!getExecutorService().isShutdown()) {
+                    stackFuture = getExecutorService().submit(new TaskWithPath());
                 }
                 next = null;//很重要！
 
 
             }
         }
+       changeDirectionImage();
+
+    }
+    @Override
+    protected void changeDirectionImage(){
         switch (curDirection){
             case UP:
-                setImage(ImageUtils.enemy1upImage);
+                setImage(ImageUtils.getEnemy1upImage());
                 break;
             case DOWN:
-                setImage(ImageUtils.enemy1downImage);
+                setImage(ImageUtils.getEnemy1downImage());
                 break;
             case LEFT:
-                setImage(ImageUtils.enemy1leftImage);
+                setImage(ImageUtils.getEnemy1leftImage());
                 break;
             case RIGHT:
-                setImage(ImageUtils.enemy1rightImage);
+                setImage(ImageUtils.getEnemy1rightImage());
                 break;
         }
-        Random random=new Random();
-        //电脑随机射击
-        if(random.nextInt(10)<=5){
-            super.GetMoveDirection(KeyEvent.VK_NUMPAD0);
-        }
     }
+
 
     //路径获得的线程
     class TaskWithPath implements Callable<Stack<Coordinate>> {
@@ -300,13 +288,13 @@ public class EnemyTank extends Tank {
      */
     private Stack<Coordinate> GetPath() {
         Stack<Coordinate> Coordinates = new Stack<>();
-        Coordinate target = new Coordinate(GameMap.tanks.get(GamePanel.getP1Tag()).getX()/width, GameMap.tanks.get(GamePanel.getP1Tag()).getY()/height);
-        if(GameMap.map[target.getX()][target.getY()]==ObjType.surface){
+        Coordinate target = new Coordinate(GameMap.getTanks().get(GamePanel.getP1Tag()).getX()/width, GameMap.getTanks().get(GamePanel.getP1Tag()).getY()/height);
+        if(GameMap.getMap()[target.getX()][target.getY()]==ObjType.surface){
             return Coordinates;
         }
         Queue<Coordinate> queue = new LinkedBlockingQueue<>();
         HashSet<Coordinate> checkSet=new HashSet<>();
-        Coordinate coordinate = new Coordinate(x/width, y/height);
+        Coordinate coordinate = new Coordinate(getX() /width, y/ getHeight());
 //        int[] a= {2,3,4,5,6};
 //        int b=Arrays.stream(a).max().getAsInt();
         checkSet.add(coordinate);
@@ -363,7 +351,7 @@ public class EnemyTank extends Tank {
                 if (flag) {
                     //通过数组，判断是否这一点可以走（2、3应当替换成对应的Obj的数字）
                     //数组越界 应当/40
-                    if(GameMap.map[tx][ty] != ObjType.air && GameMap.map[tx][ty] != ObjType.surface){
+                    if(GameMap.getMap()[tx][ty] != ObjType.air && GameMap.getMap()[tx][ty] != ObjType.surface){
                         flag=false;
                     }
 //                    if(tx==10&&ty==6){

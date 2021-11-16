@@ -1,8 +1,11 @@
-package entity;
+package entity.Shell;
 
-import lombok.Data;
+import entity.Tank.*;
+import entity.Wall.Base;
+import entity.Map.GameMap;
+import entity.VisualObj;
+import entity.Wall.Wall;
 import myEnum.Direction;
-import myEnum.Mode;
 import myEnum.ObjType;
 import panel.GamePanel;
 import utils.ImageUtils;
@@ -10,12 +13,12 @@ import utils.ImageUtils;
 import javax.imageio.ImageIO;
 import java.awt.*;
 
-@Data
+
 public class Shell extends VisualObj {
-    protected Direction direction;
-    protected int speed;
-    protected int damage;
-    protected int shooter;
+    private Direction direction;
+    private int speed;
+    private int damage;
+    private int shooter;
     public final static int width = 10;
     public final static int height = 10;
 
@@ -26,7 +29,17 @@ public class Shell extends VisualObj {
         this.direction=direction;
         speed = 10;
         setImage(ImageIO.read((GamePanel.class.getResource("/img/defaultShell.gif").openStream())));
-        GamePanel.executorService.submit(new ShellMove());
+        GamePanel.getExecutorService().submit(new ShellMove());
+    }
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+    public int getShooter() {
+        return shooter;
+    }
+
+    public void setShooter(int shooter) {
+        this.shooter = shooter;
     }
 
     @Override
@@ -41,7 +54,7 @@ public class Shell extends VisualObj {
             while (alive) {
                 if (isHit()) {
                     alive = false;
-                    GameMap.shells.remove(shooter);
+                    GameMap.getShells().remove(shooter);
                 } else {
                     if (direction == Direction.UP) {
                         y -= speed;
@@ -66,47 +79,59 @@ public class Shell extends VisualObj {
         if (x < 0 || y < 0 || x > GamePanel.getScreenWidth() || y > GamePanel.getScreenHeight()) {
             return true;
         }
-        for(Wall wall: GameMap.walls.values()){
+        for(Wall wall: GameMap.getWalls().values()){
             if(this.isCollided(wall)){
                 alive=false;
                 if(wall.getHp()==-1){//-1为不可击毁
                     return true;
                 }
-                wall.hp-=damage;//因为Shell继承自visualObj Wall也是 而且protected 所以可以直接访问....
+                wall.setHp(wall.getHp()-damage);//因为Shell继承自visualObj Wall也是 而且protected 所以可以直接访问....
                 if(wall.getHp()<=0&&!(wall instanceof Base)){
-                    GameMap.walls.remove(wall.getId());
+                    GameMap.getWalls().remove(wall.getId());
                 }
                 else if(wall.getHp()<=0){
                     //Base
-                    wall.setImage(ImageUtils.brokenBase);
-                    wall.alive=false;
+                    wall.setImage(ImageUtils.getBrokenBase());
+                    wall.setAlive(false);
+                    GamePanel.reStart();
                     //同时通知Panel GameOver
                 }
-                GameMap.map[wall.getX()/40][wall.getY()/40]= ObjType.air;
+                GameMap.getMap()[wall.getX()/40][wall.getY()/40]= ObjType.air;
                 return true;
             }
         }
-        for(Tank tank: GameMap.tanks.values()){
+        for(Tank tank: GameMap.getTanks().values()){
             if(this.isCollided(tank)){
                 alive=false;
                 if(tank.getHP()==-1){//-1为不可击毁
                     continue;
                 }
-                tank.HP-=damage;
+                tank.setHP(tank.getHP()-damage);
                 if(tank.getHP()<=0){
                     tank.setAlive(false);
-                    GameMap.tanks.remove(tank.getId());
-                    if(tank.getId()==GamePanel.getP1Tag()||tank.getId()==GamePanel.getP2Tag()){
+                    GameMap.getTanks().remove(tank.getId());
+                    if(tank instanceof PlayerTank){
                         GameMap.reBornPlayer(tank.getId());
+                    }
+                    else if(tank instanceof EnemyTank){
+                        if(tank instanceof EnemyLightTank){
+                            GameMap.reBornEnemy();
+                        }
+                        else if(tank instanceof EnemyHeavyTank){
+                            GameMap.reBornEnemy();
+                        }
+                        else{
+                        GameMap.reBornEnemy();
+                        }
                     }
                 }
                 return true;
             }
         }
-        for(Shell shell: GameMap.shells.values()){
+        for(Shell shell: GameMap.getShells().values()){
             if(this.isCollided(shell)&&!this.equals(shell)){
                 alive=false;
-                GameMap.walls.remove(shell.getShooter());
+                GameMap.getWalls().remove(shell.getShooter());
                 return true;
             }
         }

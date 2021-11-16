@@ -1,5 +1,7 @@
 package utils;
 
+import myEnum.Difficulty;
+
 import java.io.*;
 import java.util.Iterator;
 import java.util.Properties;
@@ -8,7 +10,9 @@ public class SettingsUtils {
     private boolean music;
     private boolean soundEffect;
     private String playerName;
+    private Difficulty difficulty;
     private static SettingsUtils settingsUtils;
+
 
     private SettingsUtils() {
 
@@ -18,7 +22,7 @@ public class SettingsUtils {
         if (settingsUtils != null) {
             return settingsUtils;
         }
-        settingsUtils = new SettingsUtils(true, true, "player1");
+        settingsUtils = new SettingsUtils(true, true, "player1",Difficulty.easy);
         settingsUtils.readSettings();
         return settingsUtils;
     }
@@ -41,12 +45,18 @@ public class SettingsUtils {
       settingsUtils.saveSettings();
 
     }
+    public static void setGameDifficulty(Difficulty difficulty) {
+        settingsUtils.setDifficulty(difficulty);
+        settingsUtils.saveSettings();
+
+    }
 
     private void saveSettings() {
         Properties properties = new Properties();
         properties.setProperty("music", String.valueOf(music));
         properties.setProperty("soundEffect", String.valueOf(false));
         properties.setProperty("playerName", playerName);
+        properties.setProperty("difficulty", String.valueOf(difficulty));
         File file = null;
         file = new File(SettingsUtils.class.getResource("/settings.properties").getPath());
         if (!file.exists()) {
@@ -93,20 +103,24 @@ public class SettingsUtils {
             music = Boolean.parseBoolean(properties.getProperty("music"));
             soundEffect = Boolean.parseBoolean(properties.getProperty("soundEffect"));
             playerName = properties.getProperty("playerName");
+            difficulty=Difficulty.valueOf(properties.getProperty("difficulty"));
             /**end*******在知道Key值的情况下，直接getProperty即可获取*******end*/
             fileInputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("游戏将使用默认设置!");
+            readGameSettings();
+            saveSettings();
         }
 
 
     }
 
-    private SettingsUtils(boolean music, boolean soundEffect, String playerName) {
+    private SettingsUtils(boolean music, boolean soundEffect, String playerName,Difficulty difficulty) {
         this.music = music;
         this.soundEffect = soundEffect;
         this.playerName = playerName;
+        this.difficulty=difficulty;
     }
 
     public boolean isMusic() {
@@ -131,5 +145,13 @@ public class SettingsUtils {
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
     }
 }

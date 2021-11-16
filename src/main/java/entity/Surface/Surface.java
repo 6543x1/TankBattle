@@ -1,8 +1,10 @@
-package entity;
+package entity.Surface;
+
+import entity.VisualObj;
 
 import java.awt.*;
 
-public abstract class Surface extends VisualObj{
+public abstract class Surface extends VisualObj {
     public Surface(int x, int y, int width, int height) {
         super(x, y, width, height);
     }
