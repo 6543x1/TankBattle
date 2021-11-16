@@ -64,7 +64,7 @@ public class ImageUtils {
             heavyUpImage=ImageIO.read(GamePanel.class.getResource("/img/enemy3U.gif"));
             heavyDownImage=ImageIO.read(GamePanel.class.getResource("/img/enemy3D.gif"));
             heavyLeftImage=ImageIO.read(GamePanel.class.getResource("/img/enemy3L.gif"));
-            heavyRightImage=ImageIO.read(GamePanel.class.getResource("/img/enemy3D.gif"));
+            heavyRightImage=ImageIO.read(GamePanel.class.getResource("/img/enemy3R.gif"));
             lightUpImage=ImageIO.read(GamePanel.class.getResource("/img/enemy2U.gif"));
             lightDownImage=ImageIO.read(GamePanel.class.getResource("/img/enemy2D.gif"));
             lightLeftImage=ImageIO.read(GamePanel.class.getResource("/img/enemy2L.gif"));

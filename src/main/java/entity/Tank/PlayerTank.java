@@ -79,7 +79,7 @@ public class PlayerTank extends Tank {
 //            g2.fill3DRect(getX(), getY() +40, getHP(), h, true);
 //        }
         g2.setColor(Color.GREEN);
-        g2.drawString(name,getX(),getY()-10);
+        g2.drawString(name,getX()-5,getY()-10);
 //        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() + 1 + h + 55);
 //        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() - 55);
         //g2.setColor(Color.BLUE);
