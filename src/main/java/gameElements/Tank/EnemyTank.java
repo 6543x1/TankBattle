@@ -1,7 +1,7 @@
-package entity.Tank;
+package gameElements.Tank;
 
-import entity.Coordinate;
-import entity.Map.GameMap;
+import gameElements.Coordinate;
+import gameElements.Map.GameMap;
 import myEnum.Difficulty;
 import myEnum.Direction;
 import myEnum.ObjType;
@@ -19,8 +19,8 @@ import static panel.GamePanel.*;
 
 public class EnemyTank extends Tank {
     private int count;
-    private Coordinate target;
-    private int shotCD;
+    private final Coordinate target;
+    private final int shotCD;
     public EnemyTank(int x, int y, Direction direction, int id) {
         super(x, y, direction, id);
 
@@ -83,7 +83,7 @@ public class EnemyTank extends Tank {
                 Coordinate coord=new Coordinate(x/40,y/40);
                 if (null != next && !next.equals(coord)) {
                     if (Math.abs(coord.getX() - next.getX()) > 1 || Math.abs(coord.getY() - next.getY()) > 1) {
-                        System.out.println(Thread.currentThread().getName() + ":" + coord.toString() + "->" + next.toString());
+                        System.out.println(Thread.currentThread().getName() + ":" + coord + "->" + next.toString());
                     }
                     if(x%40!=0||y%40!=0){
                         int n;
@@ -113,7 +113,6 @@ public class EnemyTank extends Tank {
                     GetMoveDirection(RandomMove());
                 }
                 if(new Coordinate(getX(),getY()).equals(coordinate)){
-//                    System.out.println("触发机制");
                     GetMoveDirection(RandomMove());
                 }
                 try {
@@ -161,7 +160,7 @@ public class EnemyTank extends Tank {
                     break;
                 default:
                     n = KeyEvent.VK_NUMPAD0;
-            };
+            }
             return n;
         }
         int[] ops = {KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_NUMPAD0};
@@ -205,7 +204,7 @@ public class EnemyTank extends Tank {
                     int choice = 65;//默认用大写了，六位重复率应该比较低吧
                     val.append((char) (choice + random.nextInt(26)));
                 } else { // 数字
-                    val.append(String.valueOf(random.nextInt(10)));
+                    val.append(random.nextInt(10));
                 }
             }
             return val.toString();

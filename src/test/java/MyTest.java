@@ -1,8 +1,8 @@
-import entity.*;
-import entity.Map.GameMap;
-import entity.Wall.Base;
-import entity.Wall.BrickWall;
-import entity.Wall.Wall;
+import gameElements.*;
+import gameElements.Map.GameMap;
+import gameElements.Wall.Base;
+import gameElements.Wall.BrickWall;
+import gameElements.Wall.Wall;
 import myEnum.Direction;
 import myEnum.ObjType;
 import org.junit.Test;

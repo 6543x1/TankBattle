@@ -1,4 +1,4 @@
-package entity.Wall;
+package gameElements.Wall;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,13 +13,12 @@ import java.awt.*;
 public class Base extends Wall {
     protected int fullHp;
     public Base(int id,int x,int y,int width,int height){
-        super(80,id, x, y, width, height);
+        super(10,id, x, y, width, height);
         image= ImageUtils.getBase();
-        fullHp=80;
+        fullHp=10;
     }
     @Override
     public void draw(Graphics2D g2) {
-        int h = 5;
         g2.drawImage(getImage(), getX(), getY(), width, height, null);
 //        if(hp!=fullHp&&alive){
 //        g2.setColor(Color.GREEN);

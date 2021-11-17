@@ -9,8 +9,8 @@ import java.awt.*;
 
 public class LevelPanel extends JPanel {
     private int level;
-    private Mode mode;
-    private JFrame mainFrame;
+    private final Mode mode;
+    private final JFrame mainFrame;
     private GamePanel gamePanel;
     private JFrame play;
     private static int playTime;
@@ -21,7 +21,7 @@ public class LevelPanel extends JPanel {
 
     public LevelPanel(int level, JFrame frame, Mode type) {
 
-        this.mainFrame = frame;//这个是从start祖传来的JFrame（窗口），以后所有的Panel均显示于此;
+        this.mainFrame = frame;//这个是从start祖传来的JFrame
         this.level = level;
         this.mode = type;
         setForeground(Color.BLACK);
@@ -39,7 +39,7 @@ public class LevelPanel extends JPanel {
         Graphics2D g2=(Graphics2D)g;
         g2.setColor(Color.GRAY);
         g2.fillRect(0, 0, getWidth(), getHeight());
-        g2.setFont(new Font("8bit_like_fontv1.1", Font.BOLD, 50));
+        g2.setFont(new Font("黑体", Font.BOLD, 50));
         g2.setColor(Color.BLACK);
 //        g2.drawString(levelStr, 260, 300);
         g2.drawImage(ImageUtils.getStage(),200,270,238,34,null);
@@ -69,7 +69,7 @@ public class LevelPanel extends JPanel {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         play.setBounds((screenSize.width-600)/3,(screenSize.height-600)/3,740,640);
         //调整此处width
-        play.setContentPane(gamePanel);//这里被夺舍了？
+        play.setContentPane(gamePanel);
 //        play.getContentPane().removeAll();
 //        play.getContentPane().add(gamePanel);
 //        play.getContentPane().validate();

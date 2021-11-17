@@ -1,9 +1,9 @@
-package entity.Tank;
+package gameElements.Tank;
 
-import entity.*;
-import entity.Map.GameMap;
-import entity.Shell.Shell;
-import entity.Wall.Wall;
+import gameElements.*;
+import gameElements.Map.GameMap;
+import gameElements.Shell.Shell;
+import gameElements.Wall.Wall;
 import myEnum.Direction;
 import panel.GamePanel;
 

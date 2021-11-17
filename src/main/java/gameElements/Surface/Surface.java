@@ -1,8 +1,6 @@
-package entity.Surface;
+package gameElements.Surface;
 
-import entity.VisualObj;
-
-import java.awt.*;
+import gameElements.VisualObj;
 
 public abstract class Surface extends VisualObj {
     public Surface(int x, int y, int width, int height) {

@@ -1,11 +1,9 @@
-package entity.Wall;
+package gameElements.Wall;
 
-import entity.VisualObj;
+import gameElements.VisualObj;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.awt.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

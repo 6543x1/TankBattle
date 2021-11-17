@@ -1,10 +1,10 @@
-package entity.Shell;
+package gameElements.Shell;
 
-import entity.Tank.*;
-import entity.Wall.Base;
-import entity.Map.GameMap;
-import entity.VisualObj;
-import entity.Wall.Wall;
+import gameElements.Tank.*;
+import gameElements.Wall.Base;
+import gameElements.Map.GameMap;
+import gameElements.VisualObj;
+import gameElements.Wall.Wall;
 import myEnum.Direction;
 import myEnum.ObjType;
 import panel.GamePanel;
@@ -15,8 +15,8 @@ import java.awt.*;
 
 
 public class Shell extends VisualObj {
-    private Direction direction;
-    private int speed;
+    private final Direction direction;
+    private final int speed;
     private int damage;
     private int shooter;
     public final static int width = 10;

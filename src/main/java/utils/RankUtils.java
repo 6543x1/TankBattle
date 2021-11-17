@@ -1,6 +1,6 @@
 package utils;
 
-import entity.Player;
+import gameElements.Player;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

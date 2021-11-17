@@ -1,6 +1,6 @@
-package entity.Tank;
+package gameElements.Tank;
 
-import entity.Map.GameMap;
+import gameElements.Map.GameMap;
 import myEnum.Direction;
 import panel.GamePanel;
 import utils.ImageUtils;
@@ -55,7 +55,7 @@ public class PlayerBotTank extends PlayerTank {
                     break;
                 default:
                     n = KeyEvent.VK_NUMPAD0;
-            };
+            }
             return n;
         }
         int[] ops = {KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_NUMPAD0};
@@ -72,10 +72,7 @@ public class PlayerBotTank extends PlayerTank {
         else if(curDirection==Direction.LEFT&&GameMap.getBaseY()==getY()&&GameMap.getBaseX()-getX()<=0){
             return true;
         }
-        else if(curDirection==Direction.RIGHT&&GameMap.getBaseY()==getY()&&GameMap.getBaseX()-getX()>=0){
-            return true;
-        }
-        return false;
+        else return curDirection == Direction.RIGHT && GameMap.getBaseY() == getY() && GameMap.getBaseX() - getX() >= 0;
     }
     @Override
     protected void changeDirectionImage(){
@@ -108,7 +105,7 @@ public class PlayerBotTank extends PlayerTank {
                 int choice = 65;//默认用大写了，六位重复率应该比较低吧
                 val.append((char) (choice + random.nextInt(26)));
             } else { // 数字
-                val.append(String.valueOf(random.nextInt(10)));
+                val.append(random.nextInt(10));
             }
         }
         return val.toString();

@@ -1,12 +1,12 @@
 package panel;
 
-import entity.*;
-import entity.Map.GameMap;
-import entity.Shell.Shell;
-import entity.Surface.Surface;
-import entity.Tank.PlayerTank;
-import entity.Tank.Tank;
-import entity.Wall.Wall;
+import gameElements.*;
+import gameElements.Map.GameMap;
+import gameElements.Shell.Shell;
+import gameElements.Surface.Surface;
+import gameElements.Tank.PlayerTank;
+import gameElements.Tank.Tank;
+import gameElements.Wall.Wall;
 import myEnum.Mode;
 import utils.RankUtils;
 import utils.SettingsUtils;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GamePanel extends JPanel {
     private static ExecutorService executorService = Executors.newCachedThreadPool();
     private Image OffScreenImage;
-    private JFrame play;
+    private final JFrame play;
     //坦克的移动区域
     public final static int screenWidth = 720;
     public final static int screenHeight = 600;
@@ -31,7 +31,7 @@ public class GamePanel extends JPanel {
     private static int P2_TAG;
 
     private static Mode mode;
-    private static AtomicBoolean live = new AtomicBoolean(false);//游戏面板是否存活
+    private static final AtomicBoolean live = new AtomicBoolean(false);//游戏面板是否存活
 
     public static GamePanel getGamePanel() {
         return gamePanel;
@@ -141,8 +141,8 @@ public class GamePanel extends JPanel {
             OffScreenImage = this.createImage(screenWidth, screenHeight);
         }
         Graphics offscreen = OffScreenImage.getGraphics();    //设置一个内存画笔颜色为前景图片颜色
-        Color c = offscreen.getColor();    //还是先保存前景颜色
-        offscreen.setColor(Color.BLACK);    //设置内存画笔颜色为绿色
+        Color c = offscreen.getColor();    //先保存前景颜色
+        offscreen.setColor(Color.BLACK);    //设置内存画笔颜色为黑色
         offscreen.fillRect(0, 0, screenWidth, screenHeight);    //画成图片，大小为游戏大小
         offscreen.setColor(c);    //还原颜色
         g.drawImage(OffScreenImage, 0, 0, null);    //在界面画出保存的图片

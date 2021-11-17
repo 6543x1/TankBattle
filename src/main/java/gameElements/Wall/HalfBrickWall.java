@@ -1,4 +1,4 @@
-package entity.Wall;
+package gameElements.Wall;
 
 import utils.ImageUtils;
 

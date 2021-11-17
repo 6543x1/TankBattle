@@ -32,11 +32,7 @@ public class SettingsUtils {
     }
 
     public static void reverseSetMusic() {
-        if (settingsUtils.isMusic()) {
-            settingsUtils.setMusic(false);
-        } else {
-            settingsUtils.setMusic(true);
-        }
+        settingsUtils.setMusic(!settingsUtils.isMusic());
         MusicUtils.play();
         saveGameSettings(settingsUtils);
     }

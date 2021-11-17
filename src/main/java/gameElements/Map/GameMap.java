@@ -1,11 +1,11 @@
-package entity.Map;
+package gameElements.Map;
 
-import entity.Coordinate;
-import entity.Shell.Shell;
-import entity.Surface.Grass;
-import entity.Surface.Surface;
-import entity.Tank.*;
-import entity.Wall.*;
+import gameElements.Coordinate;
+import gameElements.Shell.Shell;
+import gameElements.Surface.Grass;
+import gameElements.Surface.Surface;
+import gameElements.Tank.*;
+import gameElements.Wall.*;
 import myEnum.Difficulty;
 import myEnum.Direction;
 import myEnum.Mode;
@@ -19,19 +19,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GameMap {
     private volatile static ObjType[][] map;//按比例尺1：40缩小的地图
-    private volatile static ConcurrentHashMap<Integer, Tank> tanks = new ConcurrentHashMap<>();
-    private volatile static ConcurrentHashMap<Integer, Shell> shells = new ConcurrentHashMap<>();
-    private volatile static ConcurrentHashMap<Integer, Wall> walls = new ConcurrentHashMap<>();
-    private volatile static ConcurrentHashMap<Integer, Surface> surfaces = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, Tank> tanks = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, Shell> shells = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, Wall> walls = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, Surface> surfaces = new ConcurrentHashMap<>();
     private static int player1Lives = 0;
     private static int player2Lives = 0;
     private static int lightLives = 0;
     private static int normalLives = 0;
     private static int heavyLives = 0;
-    private static Coordinate ec1 = new Coordinate(160, 0);
-    private static Coordinate ec2 = new Coordinate(360, 0);
-    private static Coordinate ec3 = new Coordinate(560, 0);
-    private static Coordinate[] ecs = {ec1, ec2, ec3};
+    private static final Coordinate ec1 = new Coordinate(160, 0);
+    private static final Coordinate ec2 = new Coordinate(360, 0);
+    private static final Coordinate ec3 = new Coordinate(560, 0);
+    private static final Coordinate[] ecs = {ec1, ec2, ec3};
     private static int enemyNormalSpeed = 20;
     private static int enemyHeavySpeed = 10;
     private static int enemyLightSpeed = 30;
@@ -47,8 +47,8 @@ public class GameMap {
     }
 
 
-    private static int baseX=320;
-    private static int baseY=560;
+    private static final int baseX=320;
+    private static final int baseY=560;
 
 
     private static Difficulty difficulty;
@@ -246,7 +246,7 @@ public class GameMap {
     }
 
     public static void reBornEnemy() {
-        EnemyTank e1;
+        Tank e1;
         if (lightLives != 0) {
             e1 = new EnemyLightTank(ecs[born].getX(), ecs[born].getY(), Direction.DOWN, ecs[born].hashCode() + lightLives);
             e1.setImage(ImageUtils.getLightDownImage());

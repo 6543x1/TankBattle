@@ -1,17 +1,15 @@
 package panel;
 
 
-import entity.Player;
+import gameElements.Player;
 import utils.RankUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-import java.util.Set;
 
 public class RankPanel extends JPanel {
-    private JFrame mainFrame;
-    private JFrame play;
+    private final JFrame mainFrame;
+    private final JFrame play;
     public RankPanel(JFrame play,JFrame mainframe){
         this.play=play;
         this.mainFrame=mainframe;

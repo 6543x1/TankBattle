@@ -1,6 +1,6 @@
 package panel;
 
-import entity.Player;
+import gameElements.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,8 +9,8 @@ import java.awt.event.KeyListener;
 
 public class ResultPanel extends JPanel implements KeyListener {
     private boolean alive;
-    private Player p1;
-    private Player p2;
+    private final Player p1;
+    private final Player p2;
     public ResultPanel(Player player1,Player player2){
         alive=true;
         p1=player1;

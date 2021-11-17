@@ -1,4 +1,4 @@
-package entity.Tank;
+package gameElements.Tank;
 
 import myEnum.Direction;
 import utils.ImageUtils;

@@ -1,4 +1,4 @@
-package entity.Surface;
+package gameElements.Surface;
 
 import utils.ImageUtils;
 

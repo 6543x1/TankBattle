@@ -8,8 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SettingsPanel extends JPanel {
-    private JFrame mainFrame;
-    private JFrame play;
+    private final JFrame mainFrame;
+    private final JFrame play;
     public SettingsPanel(JFrame frame,JFrame mainFrame) {
 
         this.mainFrame = mainFrame;//这个是从start祖传来的JFrame（窗口），以后所有的Panel均显示于此;
