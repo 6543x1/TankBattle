@@ -175,19 +175,10 @@ public class EnemyTank extends Tank {
         g2.drawImage(getImage(), getX(), getY(), width, height, null);
 
         g2.setColor(Color.RED);
-        //玩家血条设置为绿色
-        //打印血条
-//        if (y >= height) {
-//            g2.draw3DRect(getX(), getY() - 10, getFullHp(), h, true);
-//            g2.fill3DRect(getX(), getY() - 10, getHP(), h, true);
-//        } else {
-//            g2.draw3DRect(getX(), getY() + 40, getFullHp(), h, true);
-//            g2.fill3DRect(getX(), getY() + 40, getHP(), h, true);
-//        }
+
         g2.setColor(Color.WHITE);
         g2.drawString(name,getX(),getY()-10);
-//        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() + 1 + h + 55);
-//        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() - 55);
+
     }
 
     @Override
@@ -199,8 +190,6 @@ public class EnemyTank extends Tank {
                 String charOrNum = random.nextInt(2) % 2 == 0 ? "char" : "num";
                 // 字符串
                 if ("char".equalsIgnoreCase(charOrNum)) {
-                    // 取得大写字母还是小写字母
-                    //int choice = random.nextInt(2) % 2 == 0 ? 65 : 97;
                     int choice = 65;//默认用大写了，六位重复率应该比较低吧
                     val.append((char) (choice + random.nextInt(26)));
                 } else { // 数字
@@ -353,12 +342,6 @@ public class EnemyTank extends Tank {
                     if(GameMap.getMap()[tx][ty] != ObjType.air && GameMap.getMap()[tx][ty] != ObjType.surface){
                         flag=false;
                     }
-//                    if(tx==10&&ty==6){
-//                        System.out.println("10,6 flag="+flag);
-//                    }
-//                    if(flag){
-//                        System.out.printf("GameMapPoint:%d,%d,type:%s\n",tx,ty,GameMap.map[tx][ty]);
-//                    }
                 }
                 //该点可以用
                 if (flag) {

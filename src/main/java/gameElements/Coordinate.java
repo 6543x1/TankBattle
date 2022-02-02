@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
-@Data
-@NoArgsConstructor
 public class Coordinate {
     //二维地图坐标，用于寻路系统
     private int x;
@@ -16,6 +14,22 @@ public class Coordinate {
     public Coordinate(int x,int y){
         this.x=x;
         this.y=y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     @Override

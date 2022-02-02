@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 public abstract class Tank extends VisualObj {
 
     protected int HP;//Hit Points 血量
-    protected int fullHp;//总血量
     protected int speed;//移速
     Direction curDirection;//当前方向
     //下一个位移的坐标
@@ -33,14 +32,6 @@ public abstract class Tank extends VisualObj {
 
     public void setHP(int HP) {
         this.HP = HP;
-    }
-
-    public int getFullHp() {
-        return fullHp;
-    }
-
-    public void setFullHp(int fullHp) {
-        this.fullHp = fullHp;
     }
 
     public int getSpeed() {
@@ -93,7 +84,6 @@ public abstract class Tank extends VisualObj {
 
     public Tank(int x, int y, Direction direction, int id) {
         super(x, y, 40, 40);
-        this.fullHp = 40;
         this.HP = 20;
         this.curDirection = direction;
         this.id = id;
@@ -243,11 +233,6 @@ public abstract class Tank extends VisualObj {
                 return false;
             }
         }
-//        Random random=new Random();
-//        //电脑随机射击
-//        if(id<Game.PLAY_1&&random.nextInt(10)==9){
-//            GetKey(16);//随机射击
-//        }
         if (x < 0) {
             x = 0;
         } else if (x > GamePanel.getScreenWidth() - width) {

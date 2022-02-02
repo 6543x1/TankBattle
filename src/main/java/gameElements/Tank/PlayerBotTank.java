@@ -17,7 +17,6 @@ public class PlayerBotTank extends PlayerTank {
         GamePanel.getExecutorService().submit(new MyTankMove());//好像p1按了0就会动
         setMove(true);//居然是因为这句话动不了 我傻了
         super.HP=40;
-        super.fullHp=40;
     }
 
 
@@ -72,7 +71,9 @@ public class PlayerBotTank extends PlayerTank {
         else if(curDirection==Direction.LEFT&&GameMap.getBaseY()==getY()&&GameMap.getBaseX()-getX()<=0){
             return true;
         }
-        else return curDirection == Direction.RIGHT && GameMap.getBaseY() == getY() && GameMap.getBaseX() - getX() >= 0;
+        else {
+            return curDirection == Direction.RIGHT && GameMap.getBaseY() == getY() && GameMap.getBaseX() - getX() >= 0;
+        }
     }
     @Override
     protected void changeDirectionImage(){
@@ -100,8 +101,6 @@ public class PlayerBotTank extends PlayerTank {
             String charOrNum = random.nextInt(2) % 2 == 0 ? "char" : "num";
             // 字符串
             if ("char".equalsIgnoreCase(charOrNum)) {
-                // 取得大写字母还是小写字母
-                //int choice = random.nextInt(2) % 2 == 0 ? 65 : 97;
                 int choice = 65;//默认用大写了，六位重复率应该比较低吧
                 val.append((char) (choice + random.nextInt(26)));
             } else { // 数字

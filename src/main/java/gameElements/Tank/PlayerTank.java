@@ -70,29 +70,12 @@ public class PlayerTank extends Tank {
         } else {
             g2.setColor(Color.RED);
         }
-        //打印血条
-//        if(y>=height){
-//            g2.draw3DRect(getX(), getY() -10, getFullHp(), h, true);
-//            g2.fill3DRect(getX(), getY() -10, getHP(), h, true);
-//        }else{
-//            g2.draw3DRect(getX(), getY() +40, getFullHp(), h, true);
-//            g2.fill3DRect(getX(), getY() +40, getHP(), h, true);
-//        }
         g2.setColor(Color.GREEN);
         g2.drawString(name,getX()-5,getY()-10);
-//        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() + 1 + h + 55);
-//        g2.drawString("(" + getX() + "," + getY() + ")", getX(), getY() - 55);
-        //g2.setColor(Color.BLUE);
-        //测试了一下 原来整个panel在第四象限上，y增加往下增长
     }
     @Override
     public void GetMoveDirection(int n){
-        int t_x = x/60;
-        int t_y = y/60;
         super.GetMoveDirection(n);
-//        if (t_y != y/40 || t_x != x/40) {
-//                EnemyTank.reCalculatePath=true;
-//            }
      }
      @Override
     protected void changeDirectionImage(){

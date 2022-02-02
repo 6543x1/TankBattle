@@ -10,7 +10,7 @@ public class EnemyHeavyTank extends EnemyTank{
         setHP(30);
         setSpeed(15);
     }
-    //子类重写父类方法，调用时会调用子类重写之后的方法!
+    //子类重写父类方法，调用时会调用子类重写之后的方法!这就是模板方法模式
     //只有一种方法会调用父类方法:子类中super.调用,否则调用子类的方法，一定是子类重写过的
     @Override
     protected void changeDirectionImage(){
